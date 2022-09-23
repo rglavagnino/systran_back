@@ -1,0 +1,26 @@
+[
+    {
+        "estado":"POR INICIAR"
+        ,"activo":1
+        ,"oid":100
+    }
+    ,
+    {
+        "estado":"TRABAJANDO"
+        ,"activo":1
+        ,"oid":200
+    }
+    ,
+    {
+        "estado":"SUSPENDIDO"
+        ,"activo":1
+        ,"oid":300
+    }
+    ,
+    {
+        "estado":"TERMINADO"
+        ,"activo":1
+        ,"oid":400
+    }
+   
+]

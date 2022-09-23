@@ -1,0 +1,32 @@
+[
+    {
+        "tipo": "RIESGO",
+        "descripcion": "Cuando una actividad tiene un tipo de riesgo",
+        "activo": 1,
+        "tid": 100
+    },
+    {
+        "tipo": "ACTIVIDAD",
+        "descripcion": "Una tarea",
+        "activo": 1,
+        "tid": 200
+    },
+    {
+        "tipo": "PROBLEMA",
+        "descripcion": "Cuando surge una problema de cualquier indole",
+        "activo": 1,
+        "tid": 300
+    },
+    {
+        "tipo": "DEPENDENCIA",
+        "descripcion": "Cuando surge una decision que no depende de mi",
+        "activo": 1,
+        "tid": 400
+    },
+    {
+        "tipo": "DECISION",
+        "descripcion": "Cuando surge una decision que si depende de mi",
+        "activo": 1,
+        "tid": 500
+    }
+]

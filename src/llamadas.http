@@ -1,0 +1,73 @@
+###
+get http://localhost:5000/
+Content-Type: application/json
+
+{
+
+}
+
+
+
+###
+get http://localhost:5000/cat/crearcatalogo
+Content-Type: application/json
+
+{
+
+}
+
+###
+put http://localhost:5000/bitacora
+Content-Type: application/json
+Authorization: DTSI IS GAH
+
+{
+    "observacion":"es nuevo2"
+    ,"usuario":"rlavagnino"
+    ,"tipo":300
+    ,"etiquetas":"hola,como,estas"
+}
+
+###
+get http://localhost:5000/bitacora/
+Content-Type: application/json
+Authorization: DTSI IS GAH
+
+{
+    "usuario":"rlavagnino"
+}
+
+
+###
+DELETE http://localhost:5000/bitacora/etiqueta/
+Content-Type: application/json
+Authorization: DTSI IS GAH
+
+{
+    "id":"632cc2fcfbd48276a2779423"
+    ,"etiqueta":"como"
+    ,"usuario":"rlavagnino"
+}
+
+###
+PUT http://localhost:5000/bitacora/etiqueta/
+Content-Type: application/json
+Authorization: DTSI IS GAH
+
+{
+    "id":"632cc2fcfbd48276a2779423"
+    ,"etiqueta": "omg2"
+    ,"usuario":"rlavagnino"
+}
+
+
+###
+PATCH  http://localhost:5000/bitacora/obs/
+Content-Type: application/json
+Authorization: DTSI IS GAH
+
+{
+    "id":"632cc2fcfbd48276a2779423"
+    ,"observacion": "omg wtf"
+    ,"usuario":"rlavagnino"
+}
