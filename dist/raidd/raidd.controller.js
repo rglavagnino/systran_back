@@ -95,6 +95,28 @@ let RaiddController = class RaiddController {
             status = common_1.HttpStatus.INTERNAL_SERVER_ERROR;
         return status;
     }
+    async actualizarTipo(token, res, id, tipo, usuario) {
+        if (!token) {
+            return res.status(common_1.HttpStatus.FORBIDDEN).json({});
+        }
+        if (token !== 'DTSI IS GAH') {
+            return res.status(common_1.HttpStatus.FORBIDDEN).json({});
+        }
+        const resul = await this.raidSrv.actualizarTipo(id, tipo, usuario);
+        const status = this.obtenerStatusHttp(resul);
+        return res.status(status).json(resul);
+    }
+    async eliminarBitacora(token, res, id, usuario) {
+        if (!token) {
+            return res.status(common_1.HttpStatus.FORBIDDEN).json({});
+        }
+        if (token !== 'DTSI IS GAH') {
+            return res.status(common_1.HttpStatus.FORBIDDEN).json({});
+        }
+        const resul = await this.raidSrv.eliminarElemento(id, usuario);
+        const status = this.obtenerStatusHttp(resul);
+        return res.status(status).json(resul);
+    }
 };
 __decorate([
     (0, common_1.Patch)('obs'),
@@ -150,6 +172,27 @@ __decorate([
     __metadata("design:paramtypes", [String, Number, String, String, String, Object]),
     __metadata("design:returntype", Promise)
 ], RaiddController.prototype, "insertarElementoBitacora", null);
+__decorate([
+    (0, common_1.Patch)('tipo'),
+    __param(0, (0, common_1.Headers)('Authorization')),
+    __param(1, (0, common_1.Res)()),
+    __param(2, (0, common_1.Body)('id')),
+    __param(3, (0, common_1.Body)('tipo')),
+    __param(4, (0, common_1.Body)('usuario')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object, String, Number, String]),
+    __metadata("design:returntype", Promise)
+], RaiddController.prototype, "actualizarTipo", null);
+__decorate([
+    (0, common_1.Delete)(''),
+    __param(0, (0, common_1.Headers)('Authorization')),
+    __param(1, (0, common_1.Res)()),
+    __param(2, (0, common_1.Body)('id')),
+    __param(3, (0, common_1.Body)('usuario')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object, String, String]),
+    __metadata("design:returntype", Promise)
+], RaiddController.prototype, "eliminarBitacora", null);
 RaiddController = __decorate([
     (0, common_1.Controller)('bitacora'),
     __metadata("design:paramtypes", [raidd_service_1.RaiddService])

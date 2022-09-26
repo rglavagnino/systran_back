@@ -33,8 +33,8 @@ export interface elementoBitacora extends mongoose.Document {
     fecha: Date;
     tipo: [
         {
-            tid: Number;
-            fecha: Date;
+            tid?: Number;
+            fecha?: Date;
             usuario: string;
             activo: Number;
         }

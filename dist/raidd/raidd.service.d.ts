@@ -13,4 +13,6 @@ export declare class RaiddService {
     obtenerTodosElementosBitacora(usuario: string): Promise<import("../utils/salida.model").salida>;
     eliminarEtiqueta(id: string, etiquetaEliminar: string, usuario: string): Promise<import("../utils/salida.model").salida>;
     insertarEtiqueta(id: string, nuevaEtiqueta: string, usuario: string): Promise<import("../utils/salida.model").salida>;
+    actualizarTipo(id: string, nuevaTipo: Number, usuario: string): Promise<import("../utils/salida.model").salida>;
+    eliminarElemento(id: string, usuario: string): Promise<import("../utils/salida.model").salida>;
 }

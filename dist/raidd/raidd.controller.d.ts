@@ -9,4 +9,6 @@ export declare class RaiddController {
     obtenerElementoBitacora(token: string, usuario: string, res: Response): Promise<Response<any, Record<string, any>>>;
     insertarElementoBitacora(obs: string, tipo: number, etiqueta: string, usuario: string, token: string, res: Response): Promise<void>;
     private obtenerStatusHttp;
+    actualizarTipo(token: string, res: Response, id: string, tipo: Number, usuario: string): Promise<Response<any, Record<string, any>>>;
+    eliminarBitacora(token: string, res: Response, id: string, usuario: string): Promise<Response<any, Record<string, any>>>;
 }

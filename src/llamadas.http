@@ -29,6 +29,27 @@ Authorization: DTSI IS GAH
 }
 
 ###
+delete http://localhost:5000/bitacora
+Content-Type: application/json
+Authorization: DTSI IS GAH
+
+{
+    "usuario":"rlavagnino"
+    ,"id":"632e2f091989f6206860bb18"
+}
+
+###
+PATCH  http://localhost:5000/bitacora/tipo/
+Content-Type: application/json
+Authorization: DTSI IS GAH
+
+{
+    "id":"632e2f091989f6206860bb11"
+    ,"tipo":500
+    ,"usuario":"rlavagnino"
+}
+
+###
 get http://localhost:5000/bitacora/
 Content-Type: application/json
 Authorization: DTSI IS GAH
@@ -69,5 +90,17 @@ Authorization: DTSI IS GAH
 {
     "id":"632cc2fcfbd48276a2779423"
     ,"observacion": "omg wtf"
+    ,"usuario":"rlavagnino"
+}
+
+
+
+###
+delete  http://localhost:5000/bitacora/
+Content-Type: application/json
+Authorization: DTSI IS GAH
+
+{
+    "id":"632cc2fcfbd48276a2779423"
     ,"usuario":"rlavagnino"
 }

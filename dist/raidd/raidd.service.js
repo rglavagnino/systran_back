@@ -41,6 +41,7 @@ const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = __importStar(require("mongoose"));
 const salida_1 = require("../utils/salida");
 const raid_query_1 = require("./raid.query");
+const bson_1 = require("bson");
 let RaiddService = class RaiddService {
     constructor(elementoBitacoraModel, estadoBitacoraModel) {
         this.elementoBitacoraModel = elementoBitacoraModel;
@@ -48,9 +49,14 @@ let RaiddService = class RaiddService {
     }
     separarEtiquetas(listadoEtiqueta) {
         (0, salida_1.logger)('1003 - Separando las etiquetas ' + listadoEtiqueta);
-        let mensaje = { tipo: 0, mensaje: '', dataUnico: 1, dataArreglo: [] };
+        let mensaje = {
+            tipo: 0,
+            mensaje: '',
+            dataUnico: 1,
+            dataArreglo: [],
+        };
         if (listadoEtiqueta) {
-            const sep = listadoEtiqueta.split(",");
+            const sep = listadoEtiqueta.split(',');
             mensaje.tipo = 1;
             mensaje.dataArreglo = sep;
         }
@@ -60,13 +66,20 @@ let RaiddService = class RaiddService {
         return mensaje;
     }
     async buscarEstadoMasNuevo() {
-        let resul = { tipo: 0, mensaje: '', dataUnico: 1, dataArreglo: [] };
+        let resul = {
+            tipo: 0,
+            mensaje: '',
+            dataUnico: 1,
+            dataArreglo: [],
+        };
         (0, salida_1.logger)('1001 - Buscando el estado mas nuevo');
-        const primerEstado = await this.estadoBitacoraModel.findOne({ activo: 1 }, { _id: 0, __v: 0, activo: 0 }, { oid: 1 }).catch((err => {
+        const primerEstado = await this.estadoBitacoraModel
+            .findOne({ activo: 1 }, { _id: 0, __v: 0, activo: 0 }, { oid: 1 })
+            .catch((err) => {
             resul.tipo = 0;
             resul.mensaje = err;
             (0, salida_1.logger)('1001 - No se puede obtener el primer estado');
-        }));
+        });
         if (primerEstado) {
             const resultado = primerEstado;
             resul.tipo = 1;
@@ -100,7 +113,10 @@ let RaiddService = class RaiddService {
         }
         (0, salida_1.loggerId)(usuario, 'Actualización la etiqueta ' + this.eliminarEtiqueta + ' ' + id, idFuncion);
         (0, salida_1.loggerId)(usuario, 'Buscando el elemento de la bitcora', idFuncion);
-        let elemento = await this.elementoBitacoraModel.findById(id);
+        let elemento = await this.elementoBitacoraModel.find({
+            activo: 1,
+            _id: new bson_1.ObjectID(id)
+        });
         if (!elemento) {
             const msg = 'elemento ' + id + ' no encontrado';
             (0, salida_1.loggerId)(usuario, msg, idFuncion);
@@ -108,9 +124,16 @@ let RaiddService = class RaiddService {
             return salida;
         }
         else {
+            if (elemento.length < 1) {
+                let msg = 'No se encuentra el elemento de la bitacora';
+                (0, salida_1.loggerId)(usuario, msg, idFuncion);
+                const salida = (0, salida_1.crearSalida)(msg, (0, salida_1.obtenerTipo)(3), '', []);
+                return salida;
+            }
+            let dataEncontrada = elemento[0];
             let msg = 'Obteniendo las observación de ' + id;
             (0, salida_1.loggerId)(usuario, msg, idFuncion);
-            let obs = elemento.observaciones;
+            let obs = dataEncontrada.observaciones;
             if (!obs) {
                 msg = 'No tiene observación ' + id;
                 (0, salida_1.loggerId)(usuario, msg, idFuncion);
@@ -129,12 +152,15 @@ let RaiddService = class RaiddService {
             const newObs = {
                 observaciones: obsNueva,
                 usuario: usuario,
-                activo: 1
+                activo: 1,
             };
-            elemento.observaciones.push(newObs);
+            dataEncontrada.observaciones.push(newObs);
             (0, salida_1.loggerId)(usuario, 'Intentando de guardar en la BDD', idFuncion);
-            await elemento.save().catch((Err) => {
-                msg = 'No se puede actualizar la observación ' + obsNueva + ' Error en guardar en la base de datos';
+            await dataEncontrada.save().catch((Err) => {
+                msg =
+                    'No se puede actualizar la observación ' +
+                        obsNueva +
+                        ' Error en guardar en la base de datos';
                 (0, salida_1.loggerId)(usuario, msg + ' ' + Err.toString(), idFuncion);
                 const salida = (0, salida_1.crearSalida)(msg, (0, salida_1.obtenerTipo)(3), '', []);
                 return salida;
@@ -155,14 +181,17 @@ let RaiddService = class RaiddService {
         const newObs = {
             observaciones: observaciones,
             usuario: usuario,
-            activo: 1
+            activo: 1,
         };
         const newTipo = {
-            tid: tipo, usuario, activo: 1, fecha: undefined
+            tid: tipo,
+            usuario,
+            activo: 1,
+            fecha: undefined,
         };
         const elementoNuevo = new this.elementoBitacoraModel({
             activo: 1,
-            usuario
+            usuario,
         });
         const msgEstadoInsertar = await this.buscarEstadoMasNuevo();
         if (msgEstadoInsertar.tipo === 0) {
@@ -173,11 +202,10 @@ let RaiddService = class RaiddService {
         const estadoInsertar = msgEstadoInsertar.dataUnico;
         const estadoNuevo = {
             oid: estadoInsertar,
-            usuario, activo: 1
+            usuario,
+            activo: 1,
         };
         elementoNuevo.estado.push(estadoNuevo);
-        if (observaciones)
-            console.log(newObs);
         elementoNuevo.observaciones.push(newObs);
         if (tipo)
             elementoNuevo.tipo.push(newTipo);
@@ -192,7 +220,9 @@ let RaiddService = class RaiddService {
                 const etiquetas = menEtiqueta.dataArreglo;
                 etiquetas.forEach((et) => {
                     const etiquetaNueva = {
-                        etiqueta: et, usuario, activo: 1
+                        etiqueta: et,
+                        usuario,
+                        activo: 1,
                     };
                     elementoNuevo.etiqueta.push(etiquetaNueva);
                 });
@@ -214,14 +244,14 @@ let RaiddService = class RaiddService {
         (0, salida_1.loggerId)(usuario, 'obteniendo todos los elementos de la bitacora', idFuncion);
         const query = raid_query_1.queryObtenerBitacora;
         const resul = await this.elementoBitacoraModel.aggregate(query);
-        const arr = resul.map(ra => {
+        const arr = resul.map((ra) => {
             return {
                 Fecha: ra.Fecha,
                 Hora: ra.Hora,
                 RAIDD: ra.RAIDD,
                 Observaciones: ra.Observaciones,
                 Etiquetas: ra.Etiquetas,
-                id: ra._id
+                id: ra._id,
             };
         });
         (0, salida_1.loggerId)(usuario, 'Se obtuvieron ' + arr.length.toString() + ' resultados', idFuncion);
@@ -276,7 +306,10 @@ let RaiddService = class RaiddService {
                 let etiquetaEncontrada = etiquetas[el];
                 etiquetaEncontrada.activo = 0;
                 await elemento.save().catch((Err) => {
-                    msg = 'No se puede eliminar la etiqueta ' + etiquetaEliminar + ' Error en guardar en la base de datos';
+                    msg =
+                        'No se puede eliminar la etiqueta ' +
+                            etiquetaEliminar +
+                            ' Error en guardar en la base de datos';
                     (0, salida_1.loggerId)(usuario, msg + ' ' + Err.toString(), idFuncion);
                     const salida = (0, salida_1.crearSalida)(msg, (0, salida_1.obtenerTipo)(3), '', []);
                     return salida;
@@ -295,15 +328,15 @@ let RaiddService = class RaiddService {
             return sal;
         }
         if (!nuevaEtiqueta) {
-            const msg = 'Falla la eliminacion debido a que no se tiene una etiqueta valida';
+            const msg = 'Falla la agregación debido a que no se tiene una etiqueta valida';
             (0, salida_1.loggerId)(usuario, msg, idFuncion);
             const salida = (0, salida_1.crearSalida)(msg, (0, salida_1.obtenerTipo)(3), '', []);
             return salida;
         }
         (0, salida_1.loggerId)(usuario, 'Agregando la etiqueta ' + nuevaEtiqueta + ' en el tarea ' + id, idFuncion);
         if (mongoose_2.default.isValidObjectId(id) == false) {
-            (0, salida_1.loggerId)(usuario, 'Falla la eliminacion debido a que no se tiene un id valido', idFuncion);
-            const salida = (0, salida_1.crearSalida)('Falla la eliminacion debido a que no se tiene un id valido', (0, salida_1.obtenerTipo)(3), '', []);
+            (0, salida_1.loggerId)(usuario, 'Falla la agregación debido a que no se tiene un id valido', idFuncion);
+            const salida = (0, salida_1.crearSalida)('Falla la agregación debido a que no se tiene un id valido', (0, salida_1.obtenerTipo)(3), '', []);
             return salida;
         }
         (0, salida_1.loggerId)(usuario, 'Buscando el elemento de la bitcora', idFuncion);
@@ -335,16 +368,146 @@ let RaiddService = class RaiddService {
                 let nueva = {
                     etiqueta: nuevaEtiqueta,
                     activo: 1,
-                    usuario: usuario
+                    usuario: usuario,
                 };
                 elemento.etiqueta.push(nueva);
                 await elemento.save().catch((Err) => {
-                    msg = 'No se puede agregar la etiqueta ' + nuevaEtiqueta + ' Error en guardar en la base de datos';
+                    msg =
+                        'No se puede agregar la etiqueta ' +
+                            nuevaEtiqueta +
+                            ' Error en guardar en la base de datos';
                     (0, salida_1.loggerId)(usuario, msg + ' ' + Err.toString(), idFuncion);
                     const salida = (0, salida_1.crearSalida)(msg, (0, salida_1.obtenerTipo)(3), '', []);
                     return salida;
                 });
                 msg = 'Etiqueta ' + nuevaEtiqueta + ' agregada';
+                const salida = (0, salida_1.crearSalida)(msg, (0, salida_1.obtenerTipo)(2), '', []);
+                return salida;
+            }
+        }
+    }
+    async actualizarTipo(id, nuevaTipo, usuario) {
+        const idFuncion = 1008;
+        if (!usuario) {
+            (0, salida_1.loggerId)(usuario, 'Agregación fallida de tipo, falta el usuario creador ', idFuncion);
+            const sal = (0, salida_1.crearSalida)('Agregación fallida de tipo, falta el usuario creador ', (0, salida_1.obtenerTipo)(3), 'Falta el usuario', []);
+            return sal;
+        }
+        if (!nuevaTipo) {
+            const msg = 'Falla la agregación debido a que no se tiene una tipo valida';
+            (0, salida_1.loggerId)(usuario, msg, idFuncion);
+            const salida = (0, salida_1.crearSalida)(msg, (0, salida_1.obtenerTipo)(3), '', []);
+            return salida;
+        }
+        (0, salida_1.loggerId)(usuario, 'Agregando la tipo ' + nuevaTipo + ' en el tarea ' + id, idFuncion);
+        if (mongoose_2.default.isValidObjectId(id) == false) {
+            (0, salida_1.loggerId)(usuario, 'Falla la agregación debido a que no se tiene un id valido', idFuncion);
+            const salida = (0, salida_1.crearSalida)('Falla la agregación debido a que no se tiene un id valido', (0, salida_1.obtenerTipo)(3), '', []);
+            return salida;
+        }
+        (0, salida_1.loggerId)(usuario, 'Buscando el elemento de la bitcora', idFuncion);
+        let elemento = await this.elementoBitacoraModel.findById(id);
+        if (!elemento) {
+            const msg = 'elemento ' + id + ' no encontrado';
+            (0, salida_1.loggerId)(usuario, msg, idFuncion);
+            const salida = (0, salida_1.crearSalida)(msg, (0, salida_1.obtenerTipo)(3), '', []);
+            return salida;
+        }
+        else {
+            let msg = 'Obteniendo los tipos de ' + id;
+            (0, salida_1.loggerId)(usuario, msg, idFuncion);
+            let tipo = elemento.tipo;
+            if (!tipo) {
+                msg = 'No tiene tipo ' + id;
+                (0, salida_1.loggerId)(usuario, msg, idFuncion);
+            }
+            (0, salida_1.loggerId)(usuario, 'Buscando el tipo activo para revisar si existe', idFuncion);
+            let el = tipo.findIndex((x) => {
+                return x.activo === 1;
+            });
+            if (el === -1) {
+                msg = 'El elemento no tiene tipo activo';
+                (0, salida_1.loggerId)(usuario, msg, idFuncion);
+            }
+            else {
+                let antigua = tipo[el];
+                (0, salida_1.loggerId)(usuario, 'Revisando si ' + nuevaTipo + ' ya esta como tipo activo', idFuncion);
+                if (antigua.tid === nuevaTipo) {
+                    msg = 'El tipo seleccionado ya existe como activo';
+                    (0, salida_1.loggerId)(usuario, msg, idFuncion);
+                    const salida = (0, salida_1.crearSalida)(msg, (0, salida_1.obtenerTipo)(1), '', []);
+                    return salida;
+                }
+                else {
+                    (0, salida_1.loggerId)(usuario, 'Inactivando el tipo anterior', idFuncion);
+                    antigua.activo = 0;
+                    let nueva = {
+                        tid: nuevaTipo,
+                        activo: 1,
+                        usuario: usuario,
+                    };
+                    (0, salida_1.loggerId)(usuario, 'Ingresando nuevo tipo', idFuncion);
+                    elemento.tipo.push(nueva);
+                    await elemento.save().catch((Err) => {
+                        msg =
+                            'No se puede agregar el tipo ' +
+                                nuevaTipo +
+                                ' Error en guardar en la base de datos';
+                        (0, salida_1.loggerId)(usuario, msg + ' ' + Err.toString(), idFuncion);
+                        const salida = (0, salida_1.crearSalida)(msg, (0, salida_1.obtenerTipo)(3), '', []);
+                        return salida;
+                    });
+                    msg = 'Tipo ' + '' + ' agregado';
+                    (0, salida_1.loggerId)(usuario, msg, idFuncion);
+                    const salida = (0, salida_1.crearSalida)(msg, (0, salida_1.obtenerTipo)(2), '', []);
+                    return salida;
+                }
+            }
+        }
+    }
+    async eliminarElemento(id, usuario) {
+        const idFuncion = 1009;
+        if (!usuario) {
+            (0, salida_1.loggerId)(usuario, 'Eliminación fallida, falta el usuario creador ', idFuncion);
+            const sal = (0, salida_1.crearSalida)('Eliminación fallida , falta el usuario creador ', (0, salida_1.obtenerTipo)(3), 'Falta el usuario', []);
+            return sal;
+        }
+        (0, salida_1.loggerId)(usuario, 'Eliminando el elemento ' + id, idFuncion);
+        if (mongoose_2.default.isValidObjectId(id) == false) {
+            (0, salida_1.loggerId)(usuario, 'Falla la eliminación debido a que no se tiene un id valido', idFuncion);
+            const salida = (0, salida_1.crearSalida)('Falla la eliminación debido a que no se tiene un id valido', (0, salida_1.obtenerTipo)(3), '', []);
+            return salida;
+        }
+        (0, salida_1.loggerId)(usuario, 'Buscando el elemento de la bitcora', idFuncion);
+        let elemento = await this.elementoBitacoraModel.find({
+            _id: new bson_1.ObjectID(id),
+            activo: 1,
+        });
+        if (!elemento) {
+            const msg = 'elemento ' + id + ' no encontrado';
+            (0, salida_1.loggerId)(usuario, msg, idFuncion);
+            const salida = (0, salida_1.crearSalida)(msg, (0, salida_1.obtenerTipo)(3), '', []);
+            return salida;
+        }
+        else {
+            if (elemento.length < 1) {
+                let msg = 'No se encuentra el elemento de la bitacora';
+                (0, salida_1.loggerId)(usuario, msg, idFuncion);
+                const salida = (0, salida_1.crearSalida)(msg, (0, salida_1.obtenerTipo)(3), '', []);
+                return salida;
+            }
+            else {
+                (0, salida_1.loggerId)(usuario, 'Intentando eliminar el elemento de la bitacora', idFuncion);
+                await this.elementoBitacoraModel
+                    .findOneAndUpdate({ _id: new bson_1.ObjectID(id) }, { activo: 0 })
+                    .catch((Err) => {
+                    let msg = 'No se puede eliminar' + ' Error en guardar en la base de datos';
+                    (0, salida_1.loggerId)(usuario, msg + ' ' + Err.toString(), idFuncion);
+                    const salida = (0, salida_1.crearSalida)(msg, (0, salida_1.obtenerTipo)(3), '', []);
+                    return salida;
+                });
+                let msg = 'Bitacora eliminada';
+                (0, salida_1.loggerId)(usuario, msg, idFuncion);
                 const salida = (0, salida_1.crearSalida)(msg, (0, salida_1.obtenerTipo)(2), '', []);
                 return salida;
             }
