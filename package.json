@@ -1,6 +1,6 @@
 {
   "name": "systran",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "",
   "author": "",
   "private": true,
@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
+    "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/mongoose": "^9.2.0",
     "@nestjs/platform-express": "^9.0.0",

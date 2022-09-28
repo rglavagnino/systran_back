@@ -39,7 +39,11 @@ let CatService = class CatService {
             if (tipoBita < 1) {
                 let resul = await this.tipoBitacoraModel.insertMany(tipobitacora_json_1.default);
                 let resules = await this.estadoBitacoraModel.insertMany(estadobitacora_json_1.default);
-                let msg = 'Se crearon ' + resul.length.toString() + ' tipos y ' + resules.length.toString() + ' estados';
+                let msg = 'Se crearon ' +
+                    resul.length.toString() +
+                    ' tipos y ' +
+                    resules.length.toString() +
+                    ' estados';
                 (0, salida_1.logger)(msg);
                 return (0, salida_1.crearSalida)(msg, (0, salida_1.obtenerTipo)(2), '', []);
             }

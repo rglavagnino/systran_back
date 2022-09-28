@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loggerId = exports.logger = exports.obtenerTipo = exports.crearSalida = void 0;
+exports.salidaYLog = exports.loggerId = exports.logger = exports.obtenerTipo = exports.crearSalida = void 0;
 const version_1 = require("./version");
 function crearSalida(mensaje, tipo, debug, datos) {
     let nuevaSalida;
@@ -33,4 +33,10 @@ function loggerId(usuario, msg, idFuncion) {
     console.log('[' + ver.version + ']' + ' [' + usuario + '] ' + ahora.toLocaleString() + ' - ' + idFuncion.toString() + ' - ' + msg);
 }
 exports.loggerId = loggerId;
+function salidaYLog(usuario, idFuncion, msg, tipoRes, datos) {
+    loggerId(usuario, msg, idFuncion);
+    const salida = crearSalida(msg, tipoRes, '', datos);
+    return salida;
+}
+exports.salidaYLog = salidaYLog;
 //# sourceMappingURL=salida.js.map

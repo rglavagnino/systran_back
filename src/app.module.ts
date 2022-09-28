@@ -11,18 +11,26 @@ import { CatModule } from './cat/cat.module';
 import { tipoBitacoraSchema } from './models/tipoBitacora.model';
 import { estadoBitacoraSchema } from './models/estadoBitacora.model';
 import { elementoBitacoraSchema } from './models/elementoBitacora.model';
+import { AuthModule } from './auth/auth.module';
+import { AuthController } from './auth/auth.controller';
+import { AuthService } from './auth/auth.service';
+import { authSchema } from './models/auth.model';
 
 
 
 @Module({
   imports: [VivoModule, MongooseModule.forRoot(obtenerConexiones(1)), RaiddModule
+   
   ,  CatModule,MongooseModule.forFeature([
     {name:'Tipo', schema: tipoBitacoraSchema}
     ,{name:'Estado', schema:estadoBitacoraSchema}
     ,{name:'ElementoBitacora', schema:elementoBitacoraSchema}
-  ])
+    ,{name: 'authSchema', schema:authSchema}
+  ]), AuthModule
   ],
-  controllers: [AppController, CatController],
-  providers: [AppService, CatService],
+  controllers: [AppController, CatController, AuthController],
+  providers: [AppService, CatService, AuthService],
 })
-export class AppModule {}
+export class AppModule {
+  
+}

@@ -45,3 +45,19 @@ export function loggerId(usuario:string, msg:string, idFuncion:number){
     const ver = obtenerVersion()
     console.log('[' + ver.version +']'+ ' [' + usuario + '] ' + ahora.toLocaleString() +' - ' + idFuncion.toString()  + ' - '  + msg) 
 }
+
+
+/**
+ * ANCHOR salida y log
+ * Crea la salida y de una vez el log
+ * @param usuario 
+ * @param idFuncion 
+ * @param msg 
+ * @param datos 
+ * @param tipoRes 
+ */
+export function salidaYLog(usuario:string, idFuncion:number,msg:string,tipoRes:string,datos?:any[]){
+    loggerId(usuario, msg , idFuncion);
+    const salida = crearSalida(msg, tipoRes, '', datos);
+    return salida
+}

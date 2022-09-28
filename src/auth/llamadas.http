@@ -1,0 +1,20 @@
+###
+
+get http://localhost:5000/auth/ffgf
+Content-Type: application/json
+Authorization: DTSI IS GAH
+
+{
+
+}  
+
+
+###
+put http://localhost:5000/auth
+Content-Type: application/json
+Authorization: DTSI IS GAH
+
+{
+    "usuario":"rlavagnino"
+    ,"usuario nuevo":"rlavagnino"
+}  

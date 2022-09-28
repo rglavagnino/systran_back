@@ -17,9 +17,12 @@ let VivoService = class VivoService {
     constructor() {
     }
     obtenerSalud() {
-        const ver = (0, version_1.obtenerVersion)();
+        let ver = (0, version_1.obtenerVersion)();
+        let salidas = [];
+        salidas.push(ver);
+        console.log(ver);
         const tp = (0, salida_1.obtenerTipo)(1);
-        let salida = (0, salida_1.crearSalida)('Estoy vivo', tp, ver, []);
+        let salida = (0, salida_1.crearSalida)('Estoy vivo', tp, '', salidas);
         (0, salida_1.logger)('Revisando si esta vivo');
         return salida;
     }

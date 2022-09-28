@@ -20,6 +20,10 @@ const cat_module_1 = require("./cat/cat.module");
 const tipoBitacora_model_1 = require("./models/tipoBitacora.model");
 const estadoBitacora_model_1 = require("./models/estadoBitacora.model");
 const elementoBitacora_model_1 = require("./models/elementoBitacora.model");
+const auth_module_1 = require("./auth/auth.module");
+const auth_controller_1 = require("./auth/auth.controller");
+const auth_service_1 = require("./auth/auth.service");
+const auth_model_1 = require("./models/auth.model");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -28,11 +32,12 @@ AppModule = __decorate([
             cat_module_1.CatModule, mongoose_1.MongooseModule.forFeature([
                 { name: 'Tipo', schema: tipoBitacora_model_1.tipoBitacoraSchema },
                 { name: 'Estado', schema: estadoBitacora_model_1.estadoBitacoraSchema },
-                { name: 'ElementoBitacora', schema: elementoBitacora_model_1.elementoBitacoraSchema }
-            ])
+                { name: 'ElementoBitacora', schema: elementoBitacora_model_1.elementoBitacoraSchema },
+                { name: 'authSchema', schema: auth_model_1.authSchema }
+            ]), auth_module_1.AuthModule
         ],
-        controllers: [app_controller_1.AppController, cat_controller_1.CatController],
-        providers: [app_service_1.AppService, cat_service_1.CatService],
+        controllers: [app_controller_1.AppController, cat_controller_1.CatController, auth_controller_1.AuthController],
+        providers: [app_service_1.AppService, cat_service_1.CatService, auth_service_1.AuthService],
     })
 ], AppModule);
 exports.AppModule = AppModule;
