@@ -23,6 +23,7 @@ let AuthService = class AuthService {
     }
     async revisarUsuarioValid(usuarioReg, passReg) {
         const idFuncion = 2001;
+        (0, salida_1.loggerId)(usuarioReg, 'Se quiere autenticar ' + usuarioReg, idFuncion);
         let errorBase = '';
         const usuariosEncontrado = await this.authModel
             .findOne({
@@ -47,7 +48,9 @@ let AuthService = class AuthService {
                 usuario: usuariosEncontrado.usuario,
                 apellido: usuariosEncontrado.apellido,
             };
-            return datosUsuario;
+            let salidas = [];
+            salidas.push(datosUsuario);
+            return (0, salida_1.salidaYLog)(usuarioReg, idFuncion, 'Usuario valido!!', (0, salida_1.obtenerTipo)(1), salidas);
         }
     }
     async insertarUsuario(usuarioNuevo, nombreNuevo, apellidoNuevo, usuario) {
@@ -60,13 +63,14 @@ let AuthService = class AuthService {
             return (0, salida_1.salidaYLog)(usuario, idFuncion, 'Debe de ingresar al menos un nombre', (0, salida_1.obtenerTipo)(3));
         }
         (0, salida_1.loggerId)(usuario, 'Buscando si existe un nombre con el mismo usuario', idFuncion);
-        const usuarioEncontrado = this.authModel
+        const usuarioEncontrado = await this.authModel
             .findOne({
             usuario: usuarioNuevo,
+            activo: 1
         })
             .exec();
         if (usuarioEncontrado) {
-            (0, salida_1.salidaYLog)(usuario, idFuncion, 'Ya existe ese usuario', (0, salida_1.obtenerTipo)(3), []);
+            return (0, salida_1.salidaYLog)(usuario, idFuncion, 'Ya existe ese usuario', (0, salida_1.obtenerTipo)(3), []);
         }
         else {
             let nuevoUsuario = new this.authModel({
@@ -74,12 +78,39 @@ let AuthService = class AuthService {
                 nombre: nombreNuevo,
                 apellido: apellidoNuevo,
             });
+            (0, salida_1.loggerId)(usuario, 'Usuario no econtrado', idFuncion);
             let errorBase = '';
             await nuevoUsuario.save().catch((error) => {
                 let salidaErr = (0, salida_1.salidaYLog)(usuario, idFuncion, 'Error al guarda en la base de datos ' + error, (0, salida_1.obtenerTipo)(3), []);
                 return salidaErr;
             });
-            return (0, salida_1.salidaYLog)(usuario, idFuncion, 'Exito en crear usuario', (0, salida_1.obtenerTipo)(3), []);
+            return (0, salida_1.salidaYLog)(usuario, idFuncion, 'Exito en crear usuario', (0, salida_1.obtenerTipo)(1), []);
+        }
+    }
+    async eliminarUsuario(usuario, usuarioEliminar) {
+        const idFuncion = 2003;
+        (0, salida_1.loggerId)(usuario, 'Eliminando usuario ' + usuarioEliminar, idFuncion);
+        if (usuario === usuarioEliminar) {
+            return (0, salida_1.salidaYLog)(usuario, idFuncion, 'No puedes eliminar tu propio usuario', (0, salida_1.obtenerTipo)(3));
+        }
+        (0, salida_1.loggerId)(usuario, 'Buscando el usuario ' + usuarioEliminar, idFuncion);
+        let usuarioEncontrado = await this.authModel
+            .findOne({
+            activo: 1,
+            usuario: usuarioEliminar,
+        })
+            .exec();
+        if (usuarioEncontrado) {
+            (0, salida_1.loggerId)(usuario, 'Usuario encontrado!, empezando a eliminar', idFuncion);
+            usuarioEncontrado.activo = 0;
+            let usuarioSalvado = await usuarioEncontrado.save();
+            if (!usuarioSalvado) {
+                return (0, salida_1.salidaYLog)(usuario, idFuncion, 'No se pudo eliminar el usuario', (0, salida_1.obtenerTipo)(3));
+            }
+            return (0, salida_1.salidaYLog)(usuario, idFuncion, 'Exito en eliminar usuario', (0, salida_1.obtenerTipo)(1));
+        }
+        else {
+            return (0, salida_1.salidaYLog)(usuario, idFuncion, 'No se encontro un usuario con ese login', (0, salida_1.obtenerTipo)(3));
         }
     }
 };

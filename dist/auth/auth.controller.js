@@ -21,17 +21,11 @@ let AuthController = class AuthController {
     constructor(authSrv) {
         this.authSrv = authSrv;
     }
-    async verificarUsuario(token, res, usuario) {
+    async verificarUsuario(res, usuario) {
         if (!usuario) {
             res
                 .status(common_1.HttpStatus.FORBIDDEN)
                 .json((0, salida_1.salidaYLog)('', 0, 'Necesita un usuario para identificar', (0, salida_1.obtenerTipo)(3), []));
-        }
-        if (!token) {
-            return res.status(common_1.HttpStatus.FORBIDDEN).json({});
-        }
-        if (token !== (0, autenta_1.obtenerPass)()) {
-            return res.status(common_1.HttpStatus.FORBIDDEN).json({});
         }
         const respuesta = await this.authSrv.revisarUsuarioValid(usuario, '');
         return res.status(common_1.HttpStatus.OK).json(respuesta);
@@ -51,14 +45,28 @@ let AuthController = class AuthController {
         const respuesta = await this.authSrv.insertarUsuario(usuarioNuevo, nombreNuevo, apellidoNuevo, usuario);
         return res.status(common_1.HttpStatus.OK).json(respuesta);
     }
+    async eliminarUsuario(usuario, usuarioEliminar, token, res) {
+        if (!token) {
+            return res.status(common_1.HttpStatus.FORBIDDEN).json({});
+        }
+        if (token !== (0, autenta_1.obtenerPass)()) {
+            return res.status(common_1.HttpStatus.FORBIDDEN).json({});
+        }
+        if (!usuario) {
+            return res
+                .status(common_1.HttpStatus.FORBIDDEN)
+                .json((0, salida_1.salidaYLog)('', 0, 'Falta el usuario', (0, salida_1.obtenerTipo)(3), []));
+        }
+        const respuesta = await this.authSrv.eliminarUsuario(usuario, usuarioEliminar);
+        return res.status(common_1.HttpStatus.OK).json(respuesta);
+    }
 };
 __decorate([
     (0, common_1.Get)(':usuario'),
-    __param(0, (0, common_1.Headers)('Authorization')),
-    __param(1, (0, common_1.Res)()),
-    __param(2, (0, common_1.Param)('usuario')),
+    __param(0, (0, common_1.Res)()),
+    __param(1, (0, common_1.Param)('usuario')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object, String]),
+    __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "verificarUsuario", null);
 __decorate([
@@ -66,13 +74,23 @@ __decorate([
     __param(0, (0, common_1.Headers)('Authorization')),
     __param(1, (0, common_1.Res)()),
     __param(2, (0, common_1.Body)('usuario')),
-    __param(3, (0, common_1.Body)('nuevo usuario')),
-    __param(4, (0, common_1.Body)('nuevo nombre')),
-    __param(5, (0, common_1.Body)('nuevo apellido')),
+    __param(3, (0, common_1.Body)('nuevo_usuario')),
+    __param(4, (0, common_1.Body)('nuevo_nombre')),
+    __param(5, (0, common_1.Body)('nuevo_apellido')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object, String, String, String, String]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "insertarUsuario", null);
+__decorate([
+    (0, common_1.Delete)(),
+    __param(0, (0, common_1.Body)('usuario')),
+    __param(1, (0, common_1.Body)('usuario_eliminar')),
+    __param(2, (0, common_1.Headers)('Authorization')),
+    __param(3, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, String, Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "eliminarUsuario", null);
 AuthController = __decorate([
     (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService])

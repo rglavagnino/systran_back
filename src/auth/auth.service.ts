@@ -17,7 +17,7 @@ export class AuthService {
    */
   async revisarUsuarioValid(usuarioReg: string, passReg: string) {
     const idFuncion = 2001;
-    // loggerId(usuarioReg,'Se quiere autenticar ' + usuarioReg,idFuncion)
+     loggerId(usuarioReg,'Se quiere autenticar ' + usuarioReg,idFuncion)
     // loggerId(usuarioReg,'Buscando si esta permitido ' + usuarioReg,idFuncion)
     let errorBase = '';
     const usuariosEncontrado = await this.authModel
@@ -56,7 +56,9 @@ export class AuthService {
         usuario: usuariosEncontrado.usuario,
         apellido: usuariosEncontrado.apellido,
       };
-      return datosUsuario;
+      let salidas:any[] = []
+      salidas.push(datosUsuario)
+      return salidaYLog(usuarioReg, idFuncion,'Usuario valido!!',obtenerTipo(1),salidas);
     }
   }
 
@@ -98,14 +100,15 @@ export class AuthService {
       idFuncion,
     );
 
-    const usuarioEncontrado = this.authModel
+    const usuarioEncontrado = await this.authModel
       .findOne({
         usuario: usuarioNuevo,
+        activo:1
       })
       .exec();
 
     if (usuarioEncontrado) {
-      salidaYLog(
+      return salidaYLog(
         usuario,
         idFuncion,
         'Ya existe ese usuario',
@@ -118,7 +121,7 @@ export class AuthService {
         nombre: nombreNuevo,
         apellido: apellidoNuevo,
       });
-
+      loggerId(usuario, 'Usuario no econtrado', idFuncion);
       let errorBase = '';
 
       await nuevoUsuario.save().catch((error) => {
@@ -136,9 +139,51 @@ export class AuthService {
         usuario,
         idFuncion,
         'Exito en crear usuario',
-        obtenerTipo(3),
+        obtenerTipo(1),
         [],
       );
     }
+  }
+
+  /**
+   * ANCHOR 2003 - Eliminar un usuario
+   * @param usuario
+   * @param usuarioEliminar
+   */
+  async eliminarUsuario(usuario: string, usuarioEliminar: string) {
+    const idFuncion = 2003;
+    loggerId(usuario, 'Eliminando usuario ' + usuarioEliminar, idFuncion);
+    if (usuario === usuarioEliminar) {
+      return salidaYLog(
+        usuario,
+        idFuncion,
+        'No puedes eliminar tu propio usuario',
+        obtenerTipo(3),
+      );
+    }
+    //Buscamos el usuario
+    loggerId(usuario,'Buscando el usuario ' + usuarioEliminar,idFuncion)
+    let usuarioEncontrado = await this.authModel
+      .findOne({
+        activo: 1,
+        usuario: usuarioEliminar,
+      })
+      .exec()
+      
+      if (usuarioEncontrado){
+        loggerId(usuario,'Usuario encontrado!, empezando a eliminar',idFuncion)
+        usuarioEncontrado.activo = 0
+        let usuarioSalvado = await usuarioEncontrado.save()
+        if (!usuarioSalvado){
+          return salidaYLog(usuario,idFuncion,'No se pudo eliminar el usuario',obtenerTipo(3))
+        }
+  
+        return salidaYLog(usuario,idFuncion,'Exito en eliminar usuario',obtenerTipo(1))
+      }else 
+      {
+        return salidaYLog(usuario,idFuncion,'No se encontro un usuario con ese login',obtenerTipo(3))
+
+      }
+
   }
 } //fin clase

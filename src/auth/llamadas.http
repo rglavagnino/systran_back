@@ -1,8 +1,6 @@
 ###
 
-get http://localhost:5000/auth/ffgf
-Content-Type: application/json
-Authorization: DTSI IS GAH
+get http://172.18.231.1:5000/auth/rlavagnino
 
 {
 
@@ -16,5 +14,18 @@ Authorization: DTSI IS GAH
 
 {
     "usuario":"rlavagnino"
-    ,"usuario nuevo":"rlavagnino"
+    ,"nuevo_usuario":"rolavagnino"
+    ,"nuevo_nombre": "Roberto Guillermo"
+    ,"nuevo_apellido":"Lavagnino Rodriguez"
+}  
+
+
+###
+DELETE http://localhost:5000/auth
+Content-Type: application/json
+Authorization: DTSI IS GAH
+
+{
+    "usuario":"rlavagnino"
+    ,"usuario_eliminar":"rolavagnino"
 }  

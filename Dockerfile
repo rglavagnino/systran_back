@@ -15,5 +15,7 @@ RUN ls
 RUN npm run build
 # exponemos el puerto dentro del docker con el del servidor
 EXPOSE 5000
+
+
 # iniciamos el servicio
 CMD  ["node","/usr/src/app/dist/main.js"]

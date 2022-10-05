@@ -20,8 +20,7 @@ export class AuthController {
   constructor(private authSrv: AuthService) {}
 
   @Get(':usuario')
-  async verificarUsuario(
-    @Headers('Authorization') token: string,
+  async verificarUsuario(   
     @Res() res: Response,
     @Param('usuario') usuario: string,
   ) {
@@ -39,14 +38,7 @@ export class AuthController {
         );
     }
 
-    if (!token) {
-      return res.status(HttpStatus.FORBIDDEN).json({});
-    }
-
-    if (token !== obtenerPass()) {
-      return res.status(HttpStatus.FORBIDDEN).json({});
-    }
-
+   
     const respuesta = await this.authSrv.revisarUsuarioValid(usuario, '');
     return res.status(HttpStatus.OK).json(respuesta);
   }
@@ -56,9 +48,9 @@ export class AuthController {
     @Headers('Authorization') token: string,
     @Res() res: Response,
     @Body('usuario') usuario: string,
-    @Body('nuevo usuario') usuarioNuevo: string,
-    @Body('nuevo nombre') nombreNuevo: string,
-    @Body('nuevo apellido') apellidoNuevo: string,
+    @Body('nuevo_usuario') usuarioNuevo: string,
+    @Body('nuevo_nombre') nombreNuevo: string,
+    @Body('nuevo_apellido') apellidoNuevo: string,
   ) {
     if (!token) {
       return res.status(HttpStatus.FORBIDDEN).json({});
@@ -77,6 +69,33 @@ export class AuthController {
       nombreNuevo,
       apellidoNuevo,
       usuario,
+    );
+    return res.status(HttpStatus.OK).json(respuesta);
+  }
+
+  @Delete()
+  async eliminarUsuario(
+    @Body('usuario') usuario: string,
+    @Body('usuario_eliminar') usuarioEliminar: string,
+    @Headers('Authorization') token: string,
+    @Res() res: Response,
+  ) {
+    if (!token) {
+      return res.status(HttpStatus.FORBIDDEN).json({});
+    }
+
+    if (token !== obtenerPass()) {
+      return res.status(HttpStatus.FORBIDDEN).json({});
+    }
+    if (!usuario) {
+      return res
+        .status(HttpStatus.FORBIDDEN)
+        .json(salidaYLog('', 0, 'Falta el usuario', obtenerTipo(3), []));
+    }
+
+    const respuesta = await this.authSrv.eliminarUsuario(
+      usuario,
+      usuarioEliminar,
     );
     return res.status(HttpStatus.OK).json(respuesta);
   }
