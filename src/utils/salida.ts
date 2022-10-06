@@ -15,16 +15,19 @@ export function obtenerStatusHttp(resul: salida) {
 }
 
 /**
- * 
+ *
  * @param usuario usuario que hizo la modificacin
  * @param funcion la funcion que se hace
  * @param operacion la operacion que esta haciendo
- * @param msg otros datos de 
+ * @param msg otros datos de
  */
-export function formarLog(usuario,funcion,operacion,msg,body:any){
-    const ahora = new Date();
-    const sep = '|'
-    const logListo = usuario + sep + funcion + sep + operacion + sep + msg + JSON.stringify(body)
+export function formarLog(usuario, funcion, operacion, msg, body: any) {
+  const ahora = new Date();
+  const sep = '|';
+  return (
+    ahora.toLocaleString() + sep +
+    usuario + sep + funcion + sep + operacion + sep + msg + JSON.stringify(body)
+  );
 }
 
 /**

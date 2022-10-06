@@ -25,7 +25,7 @@ export class BaseController {
   async insertar(
     @Res() res: Response,
     @Headers('Authorization') token: string,
-    @Body('usuario') usuario: string,
+    @Headers('usuario') usuario: string,
     @Body('nombre') nombre: string,
     @Body('departamento') depto: string,
     @Body('tipo') tipo: string,
@@ -55,7 +55,7 @@ export class BaseController {
     @Res() res: Response,
     @Headers('Authorization') token: string,
     @Param('id') idBase: string,
-    @Body('usuario') usuario: string,
+    @Headers('usuario') usuario: string,
   ) {
     console.log(idBase)
     if (!token) {
@@ -80,7 +80,7 @@ export class BaseController {
     @Body('tipo') tipo: string,
     @Body('dueño') dueño: string,
     @Body('id') idBase: string,
-    @Body('usuario') usuario: string,
+    @Headers('usuario') usuario: string,
   ) {
     if (!token) {
       return res.status(HttpStatus.FORBIDDEN).json({});

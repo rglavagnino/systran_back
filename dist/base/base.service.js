@@ -47,6 +47,7 @@ let BaseService = class BaseService {
     }
     async insertarBase(nombreBase, departamento, dueño, tipo, usuario) {
         const idFuncion = 3001;
+        const funcionDescr = 'CREACION BASE DE BASE DE DATOS';
         (0, salida_1.loggerId)(usuario, 'Intentando ingresar una nueva base de datos: ' + nombreBase, idFuncion);
         let banFaltante = '';
         if (!nombreBase) {
@@ -83,6 +84,10 @@ let BaseService = class BaseService {
             dueño: dueño,
             tipo: tipo,
         });
+        const log = (0, salida_1.formarLog)(usuario, idFuncion, funcionDescr, 'Se esta creando una nueva base de datos', nuevaBase);
+        let nuevoLog = [];
+        nuevoLog.push(log);
+        nuevaBase.log = nuevoLog;
         (0, salida_1.loggerId)(usuario, 'Creando la base: ' + nuevaBase.nombre, idFuncion);
         nuevaBase = await nuevaBase.save();
         if (!nuevaBase) {
@@ -94,6 +99,7 @@ let BaseService = class BaseService {
     }
     async eliminarBase(idBase, usuario) {
         const idFuncion = 3002;
+        const funDescr = 'ELIMINACION BASE DE DATOS';
         (0, salida_1.loggerId)(usuario, 'Intentando eliminar una base', idFuncion);
         let banFaltante = '';
         if (!idBase) {
@@ -116,7 +122,9 @@ let BaseService = class BaseService {
             return (0, salida_1.salidaYLog)(usuario, idFuncion, 'No se encontro la base', (0, salida_1.obtenerTipo)(3));
         }
         (0, salida_1.loggerId)(usuario, 'Base encontrada ' + baseEncontrada.nombre + ' empezando a eliminar', idFuncion);
+        const log = (0, salida_1.formarLog)(usuario, idFuncion, funDescr, 'Se esta eliminando una funcion', { "_id": new bson_1.ObjectID(idBase) });
         baseEncontrada.activo = 0;
+        baseEncontrada.log.push(log);
         baseEncontrada = await baseEncontrada.save();
         if (!baseEncontrada) {
             return (0, salida_1.salidaYLog)(usuario, idFuncion, 'No se pudo eliminar la base', (0, salida_1.obtenerTipo)(3));
@@ -125,6 +133,7 @@ let BaseService = class BaseService {
     }
     async actualizarBase(idBase, usuario, nombre, departamento, tipo, dueño) {
         const idFuncion = 3003;
+        const funDescr = 'ACTUALIZACION BASE DE DATOS';
         (0, salida_1.loggerId)(usuario, 'Intentando actualizar la base: ' + idBase, idFuncion);
         let banFaltante = '';
         if (!idBase) {
@@ -160,6 +169,11 @@ let BaseService = class BaseService {
             baseEncontrada.dueño = dueño;
         }
         (0, salida_1.loggerId)(usuario, 'Guardando los cambios de la base ....', idFuncion);
+        const dalog = {
+            idBase, usuario, nombre, departamento, tipo, dueño
+        };
+        const log = (0, salida_1.formarLog)(usuario, idFuncion, funDescr, 'Se esta actualizando la base', dalog);
+        baseEncontrada.log.push(log);
         baseEncontrada = await baseEncontrada.save();
         if (!baseEncontrada) {
             return (0, salida_1.salidaYLog)(usuario, idFuncion, 'No se puede guardar los cambios de la base', (0, salida_1.obtenerTipo)(3));

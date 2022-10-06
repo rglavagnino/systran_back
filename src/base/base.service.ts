@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { BaseModel } from 'src/models/base.model';
-import { logger, loggerId, obtenerTipo, salidaYLog } from 'src/utils/salida';
+import { logger, loggerId, obtenerTipo, salidaYLog, formarLog } from 'src/utils/salida';
 import mongoose, { Model, ObjectId } from 'mongoose';
 import { ObjectID } from 'bson';
 
@@ -26,6 +26,7 @@ export class BaseService {
     usuario: string,
   ): Promise<any> {
     const idFuncion = 3001;
+    const funcionDescr = 'CREACION BASE DE BASE DE DATOS'
     loggerId(
       usuario,
       'Intentando ingresar una nueva base de datos: ' + nombreBase,
@@ -84,12 +85,17 @@ export class BaseService {
 
     loggerId(usuario, 'Insertando la base de datos', idFuncion);
 
+    
     let nuevaBase = new this.baseModel({
-      nombre: nombreBase,
-      departamento: departamento,
-      dueño: dueño,
-      tipo: tipo,
+        nombre: nombreBase,
+        departamento: departamento,
+        dueño: dueño,
+        tipo: tipo,
     });
+    const log = formarLog(usuario,idFuncion,funcionDescr,'Se esta creando una nueva base de datos',nuevaBase)
+    let nuevoLog = []
+    nuevoLog.push(log)
+    nuevaBase.log = nuevoLog
     loggerId(usuario, 'Creando la base: ' + nuevaBase.nombre, idFuncion);
 
     nuevaBase = await nuevaBase.save();
@@ -120,6 +126,7 @@ export class BaseService {
    */
   async eliminarBase(idBase: string, usuario: string): Promise<any> {
     const idFuncion = 3002;
+    const funDescr = 'ELIMINACION BASE DE DATOS'
     loggerId(usuario, 'Intentando eliminar una base', idFuncion);
     let banFaltante = ''; //bandera que nos indica que es lo que falta
     //revisamos que los datos vengan completos
@@ -168,7 +175,11 @@ export class BaseService {
       idFuncion,
     );
 
+    const log = formarLog(usuario,idFuncion,funDescr,'Se esta eliminando una funcion',
+   { "_id":new ObjectID(idBase)}
+    )
     baseEncontrada.activo = 0; //eliminaos la base para que ya no se muestre
+    baseEncontrada.log.push(log)
 
     baseEncontrada = await baseEncontrada.save();
 
@@ -206,7 +217,8 @@ export class BaseService {
     dueño?: string,
   ) {
     const idFuncion = 3003;
-
+    const funDescr = 'ACTUALIZACION BASE DE DATOS'
+    
     loggerId(usuario, 'Intentando actualizar la base: ' + idBase, idFuncion);
     let banFaltante = '';
 
@@ -264,6 +276,11 @@ export class BaseService {
     }
     loggerId(usuario, 'Guardando los cambios de la base ....', idFuncion);
 
+    const dalog = {
+        idBase,usuario,nombre,departamento,tipo,dueño
+    }
+    const log = formarLog(usuario,idFuncion,funDescr,'Se esta actualizando la base',dalog)
+    baseEncontrada.log.push(log)
     baseEncontrada = await baseEncontrada.save();
 
     if (!baseEncontrada) {
@@ -274,7 +291,6 @@ export class BaseService {
         obtenerTipo(3),
       );
     }
-
     return salidaYLog(
       usuario,
       idFuncion,

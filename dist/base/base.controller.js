@@ -70,7 +70,7 @@ __decorate([
     (0, common_1.Put)(),
     __param(0, (0, common_1.Res)()),
     __param(1, (0, common_1.Headers)('Authorization')),
-    __param(2, (0, common_1.Body)('usuario')),
+    __param(2, (0, common_1.Headers)('usuario')),
     __param(3, (0, common_1.Body)('nombre')),
     __param(4, (0, common_1.Body)('departamento')),
     __param(5, (0, common_1.Body)('tipo')),
@@ -84,7 +84,7 @@ __decorate([
     __param(0, (0, common_1.Res)()),
     __param(1, (0, common_1.Headers)('Authorization')),
     __param(2, (0, common_1.Param)('id')),
-    __param(3, (0, common_1.Body)('usuario')),
+    __param(3, (0, common_1.Headers)('usuario')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, String, String, String]),
     __metadata("design:returntype", Promise)
@@ -98,7 +98,7 @@ __decorate([
     __param(4, (0, common_1.Body)('tipo')),
     __param(5, (0, common_1.Body)('dueño')),
     __param(6, (0, common_1.Body)('id')),
-    __param(7, (0, common_1.Body)('usuario')),
+    __param(7, (0, common_1.Headers)('usuario')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object, String, String, String, String, String, String]),
     __metadata("design:returntype", Promise)

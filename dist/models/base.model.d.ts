@@ -3,6 +3,7 @@ export declare const BaseSchema: mongoose.Schema<any, mongoose.Model<any, any, a
     activo: number;
     nombre: string;
     fecha: Date;
+    log: string[];
     tipo?: string;
     departamento?: string;
     dueño?: string;
@@ -14,4 +15,5 @@ export interface BaseModel extends mongoose.Document {
     dueño?: String;
     fecha: Date;
     tipo?: String;
+    log?: String[];
 }

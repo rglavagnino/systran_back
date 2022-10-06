@@ -16,18 +16,19 @@ get http://172.18.231.1:5000/base/id/rlavagnino/633dbf075c4ee5bdaad08c1f
 put http://172.18.231.1:5000/base/
 Authorization: DTSI IS GAH 
 Content-Type: application/json
+usuario: rlavagnino
 
 {
     "usuario": "rlavagnino"
     ,"tipo":"EXCEL"
     ,"dueño":"Roberto"
     ,"departamento":"dtsi"
-    ,"nombre":"mtg 3"
+    ,"nombre":"mtg 1"
 }
 
 
 ###
-DELETE http://172.18.231.1:5000/base/633dbf5ef53e7b0e93753fd7
+DELETE http://172.18.231.1:5000/base/633ee364ca381be4d485d81e
 Authorization: DTSI IS GAH 
 Content-Type: application/json
 
@@ -43,7 +44,7 @@ Content-Type: application/json
 
 {
  "usuario":"rlavagnino"
- ,"id":"633dbf075c4ee5bdaad08c1f"
+ ,"id":"633ee364ca381be4d485d81e"
  ,"dueño": "hola2"
  ,"tipo":"json"
 }

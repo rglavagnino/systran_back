@@ -1,0 +1,52 @@
+###
+get http://172.18.231.1:5000/var/rlavagnino
+
+{
+
+}
+
+###
+get http://172.18.231.1:5000/var/rlavagnino/633f1e301da43ac6fd15f5b8
+
+{
+
+}
+
+
+###
+put http://172.18.231.1:5000/var/
+Authorization: DTSI IS GAH 
+Content-Type: application/json
+usuario: rlavagnino
+
+{
+     "nombre":"variable2",
+      "norm":"vv",
+      "codigo":"codigo",
+      "desechado":1,
+      "descripcion":"descr",
+      "base":"633f1e301da43ac6fd15f5b8"
+}
+
+
+###
+DELETE http://172.18.231.1:5000/var/
+Authorization: DTSI IS GAH
+Content-Type: application/json
+usuario: rlavagnino
+
+{
+    "variable":"633f344e6d2865e79849c38b"
+}
+
+###
+Patch http://172.18.231.1:5000/var/
+Authorization: DTSI IS GAH
+Content-Type: application/json
+usuario: rlavagnino
+
+{
+    "desechado":1
+    ,"nombre":"miau3"
+    ,"variable":"633f345d6d2865e79849c38e"
+}

@@ -18,6 +18,7 @@ export const BaseSchema = new mongoose.Schema({
         required:true
         ,default:Date.now
     }
+    ,log:[String]
     
 }, {collection:'base'})//schema
 
@@ -29,4 +30,5 @@ export interface BaseModel extends mongoose.Document{
     ,dueño?:String
     ,fecha:Date
     ,tipo?:String
+    ,log?:String[]
 }

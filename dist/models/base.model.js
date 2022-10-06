@@ -22,6 +22,7 @@ exports.BaseSchema = new mongoose_1.default.Schema({
         type: Date,
         required: true,
         default: Date.now
-    }
+    },
+    log: [String]
 }, { collection: 'base' });
 //# sourceMappingURL=base.model.js.map

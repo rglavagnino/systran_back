@@ -16,6 +16,7 @@ import { AuthController } from './auth/auth.controller';
 import { AuthService } from './auth/auth.service';
 import { authSchema } from './models/auth.model';
 import { BaseModule } from './base/base.module';
+import { VariableModule } from './variable/variable.module';
 
 
 
@@ -27,7 +28,7 @@ import { BaseModule } from './base/base.module';
     ,{name:'Estado', schema:estadoBitacoraSchema}
     ,{name:'ElementoBitacora', schema:elementoBitacoraSchema}
     ,{name: 'authSchema', schema:authSchema}
-  ]), AuthModule, BaseModule
+  ]), AuthModule, BaseModule, VariableModule
   ],
   controllers: [AppController, CatController, AuthController],
   providers: [AppService, CatService, AuthService],
