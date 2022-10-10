@@ -12,12 +12,13 @@ const mongoose_1 = require("@nestjs/mongoose");
 const base_model_1 = require("../models/base.model");
 const base_controller_1 = require("./base.controller");
 const base_service_1 = require("./base.service");
+const cat_1 = require("./cat");
 let BaseModule = class BaseModule {
 };
 BaseModule = __decorate([
     (0, common_1.Module)({
         controllers: [base_controller_1.BaseController],
-        providers: [base_service_1.BaseService],
+        providers: [base_service_1.BaseService, cat_1.EstadoBase],
         imports: [
             mongoose_1.MongooseModule.forFeature([
                 { name: 'BaseSchema', schema: base_model_1.BaseSchema }

@@ -9,11 +9,11 @@ exports.BaseSchema = new mongoose_1.default.Schema({
     activo: {
         default: 1,
         type: Number,
-        required: true
+        required: true,
     },
     nombre: {
         type: String,
-        required: true
+        required: true,
     },
     tipo: String,
     departamento: String,
@@ -21,8 +21,36 @@ exports.BaseSchema = new mongoose_1.default.Schema({
     fecha: {
         type: Date,
         required: true,
-        default: Date.now
+        default: Date.now,
     },
-    log: [String]
+    log: [String],
+    estado: [{
+            activo: Number,
+            estado: String,
+            fecha: {
+                default: Date.now,
+                required: true,
+                type: Date
+            }
+        }],
+    observaciones: String,
+    version: [
+        {
+            activo: {
+                default: 1,
+                required: true,
+                type: Number,
+            },
+            version: String,
+            nombre_archivo: String,
+            numero_registros: Number,
+            fecha: {
+                default: Date.now,
+                required: true,
+                type: Date
+            },
+            dueño: String
+        },
+    ],
 }, { collection: 'base' });
 //# sourceMappingURL=base.model.js.map

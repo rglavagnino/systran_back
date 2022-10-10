@@ -29,6 +29,11 @@ exports.variableSchema = new mongoose_1.default.Schema({
         type: mongoose_1.default.Schema.Types.ObjectId,
         requiered: true
     },
-    log: [String]
+    log: [String],
+    fecha: {
+        default: Date.now,
+        required: true,
+        type: Date
+    }
 }, { collection: 'variable' });
 //# sourceMappingURL=variable.model.js.map

@@ -1,14 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { BaseModel } from 'src/models/base.model';
-import { logger, loggerId, obtenerTipo, salidaYLog, formarLog } from 'src/utils/salida';
+import {
+  logger,
+  loggerId,
+  obtenerTipo,
+  salidaYLog,
+  formarLog,
+} from 'src/utils/salida';
 import mongoose, { Model, ObjectId } from 'mongoose';
 import { ObjectID } from 'bson';
+import { EstadoBase } from './cat';
 
 @Injectable()
 export class BaseService {
   constructor(
     @InjectModel('BaseSchema') private readonly baseModel: Model<BaseModel>,
+    private cambiaEstados: EstadoBase,
   ) {}
 
   /**
@@ -26,7 +34,7 @@ export class BaseService {
     usuario: string,
   ): Promise<any> {
     const idFuncion = 3001;
-    const funcionDescr = 'CREACION BASE DE BASE DE DATOS'
+    const funcionDescr = 'CREACION BASE DE BASE DE DATOS';
     loggerId(
       usuario,
       'Intentando ingresar una nueva base de datos: ' + nombreBase,
@@ -85,19 +93,32 @@ export class BaseService {
 
     loggerId(usuario, 'Insertando la base de datos', idFuncion);
 
-    
     let nuevaBase = new this.baseModel({
-        nombre: nombreBase,
-        departamento: departamento,
-        dueño: dueño,
-        tipo: tipo,
+      nombre: nombreBase,
+      departamento: departamento,
+      dueño: dueño,
+      tipo: tipo,
     });
-    const log = formarLog(usuario,idFuncion,funcionDescr,'Se esta creando una nueva base de datos',nuevaBase)
-    let nuevoLog = []
-    nuevoLog.push(log)
-    nuevaBase.log = nuevoLog
-    loggerId(usuario, 'Creando la base: ' + nuevaBase.nombre, idFuncion);
+    const log = formarLog(
+      usuario,
+      idFuncion,
+      funcionDescr,
+      'Se esta creando una nueva base de datos',
+      nuevaBase,
+    );
 
+    let nuevoLog = [];
+    nuevoLog.push(log);
+    nuevaBase.log = nuevoLog;
+
+    let nuevoEstado = [];
+    nuevoEstado.push({
+      activo: 1,
+      estado: 'RECIBIDO',
+    });
+
+    loggerId(usuario, 'Creando la base: ' + nuevaBase.nombre, idFuncion);
+    nuevaBase.estado = nuevoEstado;
     nuevaBase = await nuevaBase.save();
 
     if (!nuevaBase) {
@@ -126,7 +147,7 @@ export class BaseService {
    */
   async eliminarBase(idBase: string, usuario: string): Promise<any> {
     const idFuncion = 3002;
-    const funDescr = 'ELIMINACION BASE DE DATOS'
+    const funDescr = 'ELIMINACION BASE DE DATOS';
     loggerId(usuario, 'Intentando eliminar una base', idFuncion);
     let banFaltante = ''; //bandera que nos indica que es lo que falta
     //revisamos que los datos vengan completos
@@ -157,7 +178,7 @@ export class BaseService {
 
     loggerId(usuario, 'Buscando la base: ' + idBase, idFuncion);
     let baseEncontrada = await this.baseModel.findOne({
-        _id:new ObjectID(idBase)
+      _id: new ObjectID(idBase),
     });
 
     if (!baseEncontrada) {
@@ -175,11 +196,15 @@ export class BaseService {
       idFuncion,
     );
 
-    const log = formarLog(usuario,idFuncion,funDescr,'Se esta eliminando una funcion',
-   { "_id":new ObjectID(idBase)}
-    )
+    const log = formarLog(
+      usuario,
+      idFuncion,
+      funDescr,
+      'Se esta eliminando una funcion',
+      { _id: new ObjectID(idBase) },
+    );
     baseEncontrada.activo = 0; //eliminaos la base para que ya no se muestre
-    baseEncontrada.log.push(log)
+    baseEncontrada.log.push(log);
 
     baseEncontrada = await baseEncontrada.save();
 
@@ -217,16 +242,14 @@ export class BaseService {
     dueño?: string,
   ) {
     const idFuncion = 3003;
-    const funDescr = 'ACTUALIZACION BASE DE DATOS'
-    
+    const funDescr = 'ACTUALIZACION BASE DE DATOS';
+
     loggerId(usuario, 'Intentando actualizar la base: ' + idBase, idFuncion);
     let banFaltante = '';
 
     if (!idBase) {
       banFaltante = 'Base a actualizar';
     }
-
-    
 
     if (!usuario) {
       banFaltante = 'Usuario que esta intentando actualizar ';
@@ -241,16 +264,16 @@ export class BaseService {
       );
     }
     if (mongoose.isValidObjectId(idBase) == false) {
-        return salidaYLog(
-          usuario,
-          idFuncion,
-          'Error, el formato de la base no es reconocido ' + idBase,
-          obtenerTipo(3),
-        );
-      }
+      return salidaYLog(
+        usuario,
+        idFuncion,
+        'Error, el formato de la base no es reconocido ' + idBase,
+        obtenerTipo(3),
+      );
+    }
     loggerId(usuario, 'Buscando la base ' + idBase, idFuncion);
     let baseEncontrada = await this.baseModel.findOne({
-        _id:new ObjectID(idBase)
+      _id: new ObjectID(idBase),
     });
     if (!baseEncontrada) {
       return salidaYLog(
@@ -277,10 +300,21 @@ export class BaseService {
     loggerId(usuario, 'Guardando los cambios de la base ....', idFuncion);
 
     const dalog = {
-        idBase,usuario,nombre,departamento,tipo,dueño
-    }
-    const log = formarLog(usuario,idFuncion,funDescr,'Se esta actualizando la base',dalog)
-    baseEncontrada.log.push(log)
+      idBase,
+      usuario,
+      nombre,
+      departamento,
+      tipo,
+      dueño,
+    };
+    const log = formarLog(
+      usuario,
+      idFuncion,
+      funDescr,
+      'Se esta actualizando la base',
+      dalog,
+    );
+    baseEncontrada.log.push(log);
     baseEncontrada = await baseEncontrada.save();
 
     if (!baseEncontrada) {
@@ -303,7 +337,7 @@ export class BaseService {
    * ANCHOR 3004 - Obtener todas la bases activos
    * @param usuario usuario que esta obtieniendo las bases
    */
-  async obtenerBasesActiva(usuario: string):Promise<any> {
+  async obtenerBasesActiva(usuario: string): Promise<any> {
     const idFuncion = 3004;
     loggerId(usuario, 'Intentando obtener las bases actias', idFuncion);
 
@@ -327,7 +361,7 @@ export class BaseService {
         obtenerTipo(3),
       );
     }
- 
+
     return salidaYLog(
       usuario,
       idFuncion,
@@ -337,11 +371,13 @@ export class BaseService {
     );
   }
 
-
-
-  async obtenerBasesPorId(idBase:string,usuario: string):Promise<any> {
+  async obtenerBasesPorId(idBase: string, usuario: string): Promise<any> {
     const idFuncion = 3006;
-    loggerId(usuario, 'Intentando obtener las bases por id: ' + idBase, idFuncion);
+    loggerId(
+      usuario,
+      'Intentando obtener las bases por id: ' + idBase,
+      idFuncion,
+    );
 
     if (!usuario) {
       salidaYLog(
@@ -351,7 +387,7 @@ export class BaseService {
         obtenerTipo(3),
       );
     }
-    const query = { activo: 1 , _id: new ObjectID(idBase)}; // el query para obtener los datos
+    const query = { activo: 1, _id: new ObjectID(idBase) }; // el query para obtener los datos
 
     const resul = await this.ejecutarConsultaBase(query, usuario);
 
@@ -363,7 +399,7 @@ export class BaseService {
         obtenerTipo(3),
       );
     }
- 
+
     return salidaYLog(
       usuario,
       idFuncion,
@@ -373,8 +409,6 @@ export class BaseService {
     );
   }
 
-
-
   /**
    * ANCHOR 3005 - Ejecuta un query y devuelve los datos
    * @param query consulta
@@ -382,13 +416,17 @@ export class BaseService {
   async ejecutarConsultaBase(query, usuario: string) {
     const idFuncion = 3005;
     try {
-      loggerId(usuario, 'Ejecutando consulta ' + JSON.stringify(query), idFuncion);
+      loggerId(
+        usuario,
+        'Ejecutando consulta ' + JSON.stringify(query),
+        idFuncion,
+      );
       let encontrado = await this.baseModel.find(query);
       if (!encontrado) {
         loggerId(usuario, 'Error al obtener los datos ', idFuncion);
         return null;
       }
-      const lon  = encontrado.length
+      const lon = encontrado.length;
       loggerId(usuario, 'Se encontraron ' + lon + ' registros', idFuncion);
       return encontrado;
     } catch (exception) {
@@ -399,5 +437,233 @@ export class BaseService {
       );
       return null;
     }
+  }
+
+  private crearNomenclaturaBase(usuario: string, nomBase: string) {
+    const idFuncion = 3006;
+    loggerId(
+      usuario,
+      'Se esta creando una nomenclatura para la base ' + nomBase,
+      idFuncion,
+    );
+    const ahora = new Date();
+    let ver =
+      ahora.toLocaleDateString().replace("/","").replace(":","") +
+      ahora.toLocaleTimeString().replace("/","").replace(":","") +
+      Math.floor(Math.random() * 125).toString();
+    ver = ver.replace("/","").replace(":","")
+      loggerId(
+      usuario,
+      'Version creada para ' + nomBase + ' es: ' + ver,
+      idFuncion,
+    );
+    return ver;
+  }
+
+  /**
+   * ANCHOR 3007 - Insertar una version
+   * @param usuario
+   * @param base
+   * @param dueño
+   * @returns
+   */
+  async insertarVersion(
+    usuario: string,
+    base: string,
+    dueño: string,
+    arch: string,
+    reg: number,
+  ) {
+    const idFuncion = 3007;
+    loggerId(usuario, 'Se esta creando una version', idFuncion);
+
+    let banFaltante = '';
+    if (!dueño) banFaltante = 'el usuario que esta creando la version';
+    if (!base) banFaltante = 'la base para crear la version';
+    if (!usuario) banFaltante = 'el usuario que esta creando la version';
+
+    if (banFaltante !== '')
+      return salidaYLog(
+        usuario,
+        idFuncion,
+        'No se puede crear la version falta ' + banFaltante,
+        obtenerTipo(3),
+      );
+
+    if (mongoose.isValidObjectId(base) == false) {
+      return salidaYLog(
+        usuario,
+        idFuncion,
+        'Error, el formato de la base no es reconocido ' + base,
+        obtenerTipo(3),
+      );
+    }
+
+    loggerId(usuario, 'Buscando la base ' + base, idFuncion);
+    let versionEncontrada = await this.baseModel.findOne({
+      activo: 1,
+      _id: new ObjectID(base),
+    });
+
+    if (!versionEncontrada)
+      return salidaYLog(
+        usuario,
+        idFuncion,
+        'No se puede crear la version',
+        obtenerTipo(3),
+      );
+    loggerId(
+      usuario,
+      'Base encontada, iniciando la creacion de la version en la base ' +
+        versionEncontrada.nombre,
+      idFuncion,
+    );
+
+    const verNueva = this.crearNomenclaturaBase(
+      usuario,
+      versionEncontrada.nombre.toString(),
+    );
+
+    let versionActivo = versionEncontrada.version.find(
+      (element) => element.activo === 1,
+    );
+    if (versionActivo) versionActivo.activo = 0;
+
+    const nuevaVersion = {
+      version: verNueva,
+      dueño: dueño,
+      nombre_archivo: arch,
+      numero_registros: reg,
+    };
+
+    versionEncontrada.version.push(nuevaVersion);
+    let baseModificada = await versionEncontrada.save();
+
+    if (!baseModificada)
+      return salidaYLog(
+        usuario,
+        idFuncion,
+        'Error al crear la version',
+        obtenerTipo(3),
+      );
+    let sal = [];
+    sal.push(verNueva);
+    return salidaYLog(
+      usuario,
+      idFuncion,
+      'Exito en crear la version',
+      obtenerTipo(2),
+      sal,
+    );
+  }
+
+  /**
+   * ANCHOR 3008 - Cambiar el estado
+   * @param estadoNuevo
+   * @param base
+   * @param usuario
+   * @returns
+   */
+  async cambiarEstado(estadoNuevo: string, base: string, usuario: string) {
+    const idFuncion = 3008;
+    //revisamos si viene la informacion
+    loggerId(
+      usuario,
+      'Tratando el el cambio de esta a ' + estadoNuevo,
+      idFuncion,
+    );
+    let banFaltante = '';
+    if (!estadoNuevo) banFaltante = 'el estado nuevo';
+    if (!base) banFaltante = 'la base que desea modificar';
+    if (!usuario) banFaltante = 'el usuario que desea hacer el cambio';
+    if (banFaltante !== '')
+      return salidaYLog(
+        usuario,
+        idFuncion,
+        'No se puede realizar la operacion falta ' + banFaltante,
+        obtenerTipo(3),
+      );
+    if (mongoose.isValidObjectId(base) == false) {
+      return salidaYLog(
+        usuario,
+        idFuncion,
+        'Error, el formato de la base no es reconocido ' + base,
+        obtenerTipo(3),
+      );
+    }
+
+    let baseEncontrada = await this.baseModel.findOne({
+      activo: 1,
+      base: new ObjectID(base),
+    });
+
+    if (!baseEncontrada)
+      return salidaYLog(
+        usuario,
+        idFuncion,
+        'No se puede cambiar estado, encontro la base de datos',
+        obtenerTipo(3),
+      );
+
+    const descrEstadoNuevo = this.cambiaEstados.obtenerCodigoBase(estadoNuevo);
+    if (!descrEstadoNuevo)
+      return salidaYLog(
+        usuario,
+        idFuncion,
+        'No se conoce el estado',
+        obtenerTipo(3),
+      );
+
+    let nombreBase = baseEncontrada.nombre;
+
+    loggerId(
+      usuario,
+      'Base encontrada ' +
+        nombreBase +
+        ', intentando a cambiar a ' +
+        estadoNuevo,
+      idFuncion,
+    );
+
+    let estados = baseEncontrada.estado;
+
+    let estadoActivo = estados.find((estadoE) => estadoE.activo === 1);
+
+    if (!estadoActivo)
+      return salidaYLog(
+        usuario,
+        idFuncion,
+        'No se encontro un estado activo para la base ' + baseEncontrada.nombre,
+        obtenerTipo(3),
+      );
+
+    if (!this.cambiaEstados.cambiarEstado(estadoActivo.estado, estadoNuevo))
+      return salidaYLog(
+        usuario,
+        idFuncion,
+        'No se puede cambiar al estado ' +
+          estadoNuevo +
+          ' debido a que este se encuentra en el estado ' +
+          estadoActivo.estado,
+        obtenerTipo(3),
+      );
+
+    estadoActivo.activo = 0;
+    const nuevoEstado = {
+      activo: 1,
+      estado: estadoNuevo,
+    };
+
+    baseEncontrada.estado.push(nuevoEstado);
+
+    baseEncontrada = await baseEncontrada.save();
+    if (!baseEncontrada)
+      return salidaYLog(
+        usuario,
+        idFuncion,
+        'No se pudo registrar el nuevo estado',
+        obtenerTipo(3),
+      );
+    return salidaYLog(usuario, idFuncion, 'Exito en guardar', obtenerTipo(2));
   }
 }

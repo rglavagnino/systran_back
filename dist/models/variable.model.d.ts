@@ -4,6 +4,7 @@ export declare const variableSchema: mongoose.Schema<any, mongoose.Model<any, an
     nombre_variable: string;
     desechado: number;
     log: string[];
+    fecha: Date;
     codigo_variable?: string;
     descripcion?: string;
     nombre_normalizado?: string;

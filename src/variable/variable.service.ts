@@ -122,7 +122,7 @@ export class VariableService {
       );
     }
     const sal = [];
-    sal.push(nuevaVariable);
+    sal.push(nuevaVariable._id);
     return salidaYLog(
       usuario,
       idFuncion,
@@ -304,7 +304,7 @@ export class VariableService {
     }
 
     let sal = [];
-    sal.push(varEncontrada);
+    sal.push(varEncontrada._id);
     return salidaYLog(
       usuario,
       idFuncion,
@@ -341,7 +341,7 @@ export class VariableService {
       .find({
         activo: 1,
         base: new ObjectID(base),
-      })
+      },{log:0})
       .exec();
 
     if (!varEncontradas)
@@ -372,7 +372,7 @@ export class VariableService {
     const varEncontradas = await this.variableModel
       .find({
         activo: 1,
-      })
+      },{log:0})
       .exec();
 
     if (!varEncontradas)

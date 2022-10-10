@@ -48,3 +48,78 @@ Content-Type: application/json
  ,"dueño": "hola2"
  ,"tipo":"json"
 }
+
+
+
+###
+put http://172.18.231.1:5000/base/est/preprocesar
+Authorization: DTSI IS GAH 
+Content-Type: application/json
+usuario: rlavagnino
+
+{
+   "base":"63448a36a88b5ff8c83e3fb8"
+}
+
+###
+put http://172.18.231.1:5000/base/est/trabajar
+Authorization: DTSI IS GAH 
+Content-Type: application/json
+usuario: rlavagnino
+
+{
+   "base":"63448a36a88b5ff8c83e3fb8"
+}
+
+###
+put http://172.18.231.1:5000/base/est/modelar
+Authorization: DTSI IS GAH 
+Content-Type: application/json
+usuario: rlavagnino
+
+{
+   "base":"63448a36a88b5ff8c83e3fb8"
+}
+
+
+###
+put http://172.18.231.1:5000/base/est/dormir
+Authorization: DTSI IS GAH 
+Content-Type: application/json
+usuario: rlavagnino
+
+{
+   "base":"63448a36a88b5ff8c83e3fb8"
+}
+
+
+###
+put http://172.18.231.1:5000/base/est/cerrar
+Authorization: DTSI IS GAH 
+Content-Type: application/json
+usuario: rlavagnino
+
+{
+   "base":"63448a36a88b5ff8c83e3fb8"
+}
+
+
+###
+put http://172.18.231.1:5000/base/version
+Authorization: DTSI IS GAH 
+Content-Type: application/json
+usuario: rlavagnino
+
+{
+   "base":"63448a36a88b5ff8c83e3fb8"
+   ,"archivo":"yo.xlsx"
+   ,"registros":"250000"
+   ,"dueño":"rlavagnino"
+}
+
+
+
+
+
+
+

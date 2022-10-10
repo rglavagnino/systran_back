@@ -41,9 +41,11 @@ const mongoose_1 = require("@nestjs/mongoose");
 const salida_1 = require("../utils/salida");
 const mongoose_2 = __importStar(require("mongoose"));
 const bson_1 = require("bson");
+const cat_1 = require("./cat");
 let BaseService = class BaseService {
-    constructor(baseModel) {
+    constructor(baseModel, cambiaEstados) {
         this.baseModel = baseModel;
+        this.cambiaEstados = cambiaEstados;
     }
     async insertarBase(nombreBase, departamento, dueño, tipo, usuario) {
         const idFuncion = 3001;
@@ -88,7 +90,13 @@ let BaseService = class BaseService {
         let nuevoLog = [];
         nuevoLog.push(log);
         nuevaBase.log = nuevoLog;
+        let nuevoEstado = [];
+        nuevoEstado.push({
+            activo: 1,
+            estado: 'RECIBIDO',
+        });
         (0, salida_1.loggerId)(usuario, 'Creando la base: ' + nuevaBase.nombre, idFuncion);
+        nuevaBase.estado = nuevoEstado;
         nuevaBase = await nuevaBase.save();
         if (!nuevaBase) {
             return (0, salida_1.salidaYLog)(usuario, idFuncion, 'Error al guardar la base', (0, salida_1.obtenerTipo)(3));
@@ -116,13 +124,13 @@ let BaseService = class BaseService {
         }
         (0, salida_1.loggerId)(usuario, 'Buscando la base: ' + idBase, idFuncion);
         let baseEncontrada = await this.baseModel.findOne({
-            _id: new bson_1.ObjectID(idBase)
+            _id: new bson_1.ObjectID(idBase),
         });
         if (!baseEncontrada) {
             return (0, salida_1.salidaYLog)(usuario, idFuncion, 'No se encontro la base', (0, salida_1.obtenerTipo)(3));
         }
         (0, salida_1.loggerId)(usuario, 'Base encontrada ' + baseEncontrada.nombre + ' empezando a eliminar', idFuncion);
-        const log = (0, salida_1.formarLog)(usuario, idFuncion, funDescr, 'Se esta eliminando una funcion', { "_id": new bson_1.ObjectID(idBase) });
+        const log = (0, salida_1.formarLog)(usuario, idFuncion, funDescr, 'Se esta eliminando una funcion', { _id: new bson_1.ObjectID(idBase) });
         baseEncontrada.activo = 0;
         baseEncontrada.log.push(log);
         baseEncontrada = await baseEncontrada.save();
@@ -150,7 +158,7 @@ let BaseService = class BaseService {
         }
         (0, salida_1.loggerId)(usuario, 'Buscando la base ' + idBase, idFuncion);
         let baseEncontrada = await this.baseModel.findOne({
-            _id: new bson_1.ObjectID(idBase)
+            _id: new bson_1.ObjectID(idBase),
         });
         if (!baseEncontrada) {
             return (0, salida_1.salidaYLog)(usuario, idFuncion, 'No se puede actualizar la base', (0, salida_1.obtenerTipo)(3));
@@ -170,7 +178,12 @@ let BaseService = class BaseService {
         }
         (0, salida_1.loggerId)(usuario, 'Guardando los cambios de la base ....', idFuncion);
         const dalog = {
-            idBase, usuario, nombre, departamento, tipo, dueño
+            idBase,
+            usuario,
+            nombre,
+            departamento,
+            tipo,
+            dueño,
         };
         const log = (0, salida_1.formarLog)(usuario, idFuncion, funDescr, 'Se esta actualizando la base', dalog);
         baseEncontrada.log.push(log);
@@ -224,11 +237,114 @@ let BaseService = class BaseService {
             return null;
         }
     }
+    crearNomenclaturaBase(usuario, nomBase) {
+        const idFuncion = 3006;
+        (0, salida_1.loggerId)(usuario, 'Se esta creando una nomenclatura para la base ' + nomBase, idFuncion);
+        const ahora = new Date();
+        let ver = ahora.toLocaleDateString().replace("/", "").replace(":", "") +
+            ahora.toLocaleTimeString().replace("/", "").replace(":", "") +
+            Math.floor(Math.random() * 125).toString();
+        ver = ver.replace("/", "").replace(":", "");
+        (0, salida_1.loggerId)(usuario, 'Version creada para ' + nomBase + ' es: ' + ver, idFuncion);
+        return ver;
+    }
+    async insertarVersion(usuario, base, dueño, arch, reg) {
+        const idFuncion = 3007;
+        (0, salida_1.loggerId)(usuario, 'Se esta creando una version', idFuncion);
+        let banFaltante = '';
+        if (!dueño)
+            banFaltante = 'el usuario que esta creando la version';
+        if (!base)
+            banFaltante = 'la base para crear la version';
+        if (!usuario)
+            banFaltante = 'el usuario que esta creando la version';
+        if (banFaltante !== '')
+            return (0, salida_1.salidaYLog)(usuario, idFuncion, 'No se puede crear la version falta ' + banFaltante, (0, salida_1.obtenerTipo)(3));
+        if (mongoose_2.default.isValidObjectId(base) == false) {
+            return (0, salida_1.salidaYLog)(usuario, idFuncion, 'Error, el formato de la base no es reconocido ' + base, (0, salida_1.obtenerTipo)(3));
+        }
+        (0, salida_1.loggerId)(usuario, 'Buscando la base ' + base, idFuncion);
+        let versionEncontrada = await this.baseModel.findOne({
+            activo: 1,
+            _id: new bson_1.ObjectID(base),
+        });
+        if (!versionEncontrada)
+            return (0, salida_1.salidaYLog)(usuario, idFuncion, 'No se puede crear la version', (0, salida_1.obtenerTipo)(3));
+        (0, salida_1.loggerId)(usuario, 'Base encontada, iniciando la creacion de la version en la base ' +
+            versionEncontrada.nombre, idFuncion);
+        const verNueva = this.crearNomenclaturaBase(usuario, versionEncontrada.nombre.toString());
+        let versionActivo = versionEncontrada.version.find((element) => element.activo === 1);
+        if (versionActivo)
+            versionActivo.activo = 0;
+        const nuevaVersion = {
+            version: verNueva,
+            dueño: dueño,
+            nombre_archivo: arch,
+            numero_registros: reg,
+        };
+        versionEncontrada.version.push(nuevaVersion);
+        let baseModificada = await versionEncontrada.save();
+        if (!baseModificada)
+            return (0, salida_1.salidaYLog)(usuario, idFuncion, 'Error al crear la version', (0, salida_1.obtenerTipo)(3));
+        let sal = [];
+        sal.push(verNueva);
+        return (0, salida_1.salidaYLog)(usuario, idFuncion, 'Exito en crear la version', (0, salida_1.obtenerTipo)(2), sal);
+    }
+    async cambiarEstado(estadoNuevo, base, usuario) {
+        const idFuncion = 3008;
+        (0, salida_1.loggerId)(usuario, 'Tratando el el cambio de esta a ' + estadoNuevo, idFuncion);
+        let banFaltante = '';
+        if (!estadoNuevo)
+            banFaltante = 'el estado nuevo';
+        if (!base)
+            banFaltante = 'la base que desea modificar';
+        if (!usuario)
+            banFaltante = 'el usuario que desea hacer el cambio';
+        if (banFaltante !== '')
+            return (0, salida_1.salidaYLog)(usuario, idFuncion, 'No se puede realizar la operacion falta ' + banFaltante, (0, salida_1.obtenerTipo)(3));
+        if (mongoose_2.default.isValidObjectId(base) == false) {
+            return (0, salida_1.salidaYLog)(usuario, idFuncion, 'Error, el formato de la base no es reconocido ' + base, (0, salida_1.obtenerTipo)(3));
+        }
+        let baseEncontrada = await this.baseModel.findOne({
+            activo: 1,
+            base: new bson_1.ObjectID(base),
+        });
+        if (!baseEncontrada)
+            return (0, salida_1.salidaYLog)(usuario, idFuncion, 'No se puede cambiar estado, encontro la base de datos', (0, salida_1.obtenerTipo)(3));
+        const descrEstadoNuevo = this.cambiaEstados.obtenerCodigoBase(estadoNuevo);
+        if (!descrEstadoNuevo)
+            return (0, salida_1.salidaYLog)(usuario, idFuncion, 'No se conoce el estado', (0, salida_1.obtenerTipo)(3));
+        let nombreBase = baseEncontrada.nombre;
+        (0, salida_1.loggerId)(usuario, 'Base encontrada ' +
+            nombreBase +
+            ', intentando a cambiar a ' +
+            estadoNuevo, idFuncion);
+        let estados = baseEncontrada.estado;
+        let estadoActivo = estados.find((estadoE) => estadoE.activo === 1);
+        if (!estadoActivo)
+            return (0, salida_1.salidaYLog)(usuario, idFuncion, 'No se encontro un estado activo para la base ' + baseEncontrada.nombre, (0, salida_1.obtenerTipo)(3));
+        if (!this.cambiaEstados.cambiarEstado(estadoActivo.estado, estadoNuevo))
+            return (0, salida_1.salidaYLog)(usuario, idFuncion, 'No se puede cambiar al estado ' +
+                estadoNuevo +
+                ' debido a que este se encuentra en el estado ' +
+                estadoActivo.estado, (0, salida_1.obtenerTipo)(3));
+        estadoActivo.activo = 0;
+        const nuevoEstado = {
+            activo: 1,
+            estado: estadoNuevo,
+        };
+        baseEncontrada.estado.push(nuevoEstado);
+        baseEncontrada = await baseEncontrada.save();
+        if (!baseEncontrada)
+            return (0, salida_1.salidaYLog)(usuario, idFuncion, 'No se pudo registrar el nuevo estado', (0, salida_1.obtenerTipo)(3));
+        return (0, salida_1.salidaYLog)(usuario, idFuncion, 'Exito en guardar', (0, salida_1.obtenerTipo)(2));
+    }
 };
 BaseService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)('BaseSchema')),
-    __metadata("design:paramtypes", [mongoose_2.Model])
+    __metadata("design:paramtypes", [mongoose_2.Model,
+        cat_1.EstadoBase])
 ], BaseService);
 exports.BaseService = BaseService;
 //# sourceMappingURL=base.service.js.map

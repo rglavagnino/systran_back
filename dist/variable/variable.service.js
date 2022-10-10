@@ -99,7 +99,7 @@ let VariableService = class VariableService {
             return (0, salida_1.salidaYLog)(usuario, idFuncion, 'No se pudo crear la variable ', (0, salida_1.obtenerTipo)(3));
         }
         const sal = [];
-        sal.push(nuevaVariable);
+        sal.push(nuevaVariable._id);
         return (0, salida_1.salidaYLog)(usuario, idFuncion, 'Variable ' +
             nuevaVariable.nombre_variable +
             ' ha sido creado exitosamente', (0, salida_1.obtenerTipo)(2), sal);
@@ -180,7 +180,7 @@ let VariableService = class VariableService {
             return (0, salida_1.salidaYLog)(usuario, idFuncion, 'No se puedo actualizar la base de datos', (0, salida_1.obtenerTipo)(3));
         }
         let sal = [];
-        sal.push(varEncontrada);
+        sal.push(varEncontrada._id);
         return (0, salida_1.salidaYLog)(usuario, idFuncion, 'Exito en guardar los cambios de la funcion', (0, salida_1.obtenerTipo)(2), sal);
     }
     async obtenerVariableBase(base, usuario) {
@@ -195,7 +195,7 @@ let VariableService = class VariableService {
             .find({
             activo: 1,
             base: new bson_1.ObjectID(base),
-        })
+        }, { log: 0 })
             .exec();
         if (!varEncontradas)
             return (0, salida_1.salidaYLog)(usuario, idFuncion, 'No se pudo obtener los datos de las variables', (0, salida_1.obtenerTipo)(3));
@@ -207,7 +207,7 @@ let VariableService = class VariableService {
         const varEncontradas = await this.variableModel
             .find({
             activo: 1,
-        })
+        }, { log: 0 })
             .exec();
         if (!varEncontradas)
             return (0, salida_1.salidaYLog)(usuario, idFuncion, 'No se pudo obtener los datos de las variables', (0, salida_1.obtenerTipo)(3));

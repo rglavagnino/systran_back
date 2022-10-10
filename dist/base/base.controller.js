@@ -65,6 +65,73 @@ let BaseController = class BaseController {
         const status = (0, salida_1.obtenerStatusHttp)(resp);
         return res.status(status).json(resp);
     }
+    async dormir(token, usuario, res, base) {
+        if (!token) {
+            return res.status(common_1.HttpStatus.FORBIDDEN).json({});
+        }
+        if (token !== (0, autenta_1.obtenerPass)()) {
+            return res.status(common_1.HttpStatus.FORBIDDEN).json({});
+        }
+        const resp = await this.baseSrv.cambiarEstado('DURMIENDO', base, usuario);
+        const status = (0, salida_1.obtenerStatusHttp)(resp);
+        return res.status(status).json(resp);
+    }
+    async trabajar(token, usuario, res, base) {
+        if (!token) {
+            return res.status(common_1.HttpStatus.FORBIDDEN).json({});
+        }
+        if (token !== (0, autenta_1.obtenerPass)()) {
+            return res.status(common_1.HttpStatus.FORBIDDEN).json({});
+        }
+        const resp = await this.baseSrv.cambiarEstado('TRABAJANDO', base, usuario);
+        const status = (0, salida_1.obtenerStatusHttp)(resp);
+        return res.status(status).json(resp);
+    }
+    async modelar(token, usuario, res, base) {
+        if (!token) {
+            return res.status(common_1.HttpStatus.FORBIDDEN).json({});
+        }
+        if (token !== (0, autenta_1.obtenerPass)()) {
+            return res.status(common_1.HttpStatus.FORBIDDEN).json({});
+        }
+        const resp = await this.baseSrv.cambiarEstado('MODELADO', base, usuario);
+        const status = (0, salida_1.obtenerStatusHttp)(resp);
+        return res.status(status).json(resp);
+    }
+    async cerrar(token, usuario, res, base) {
+        if (!token) {
+            return res.status(common_1.HttpStatus.FORBIDDEN).json({});
+        }
+        if (token !== (0, autenta_1.obtenerPass)()) {
+            return res.status(common_1.HttpStatus.FORBIDDEN).json({});
+        }
+        const resp = await this.baseSrv.cambiarEstado('CERRADO', base, usuario);
+        const status = (0, salida_1.obtenerStatusHttp)(resp);
+        return res.status(status).json(resp);
+    }
+    async preprocesarDatos(token, usuario, res, base) {
+        if (!token) {
+            return res.status(common_1.HttpStatus.FORBIDDEN).json({});
+        }
+        if (token !== (0, autenta_1.obtenerPass)()) {
+            return res.status(common_1.HttpStatus.FORBIDDEN).json({});
+        }
+        console.log(usuario);
+        const resp = await this.baseSrv.cambiarEstado('PREPROCESANDO', base, usuario);
+        const status = (0, salida_1.obtenerStatusHttp)(resp);
+        return res.status(status).json(resp);
+    }
+    async insertarVersion(token, usuario, res, base, archivo, registros, dueño) {
+        if (!token) {
+            return res.status(common_1.HttpStatus.FORBIDDEN).json({});
+        }
+        if (token !== (0, autenta_1.obtenerPass)()) {
+            return res.status(common_1.HttpStatus.FORBIDDEN).json({});
+        }
+        const resp = await this.baseSrv.insertarVersion(usuario, base, dueño, archivo, registros);
+        const status = (0, salida_1.obtenerStatusHttp)(resp);
+        return res.status(status).json(resp);
+    }
 };
 __decorate([
     (0, common_1.Put)(),
@@ -120,6 +187,69 @@ __decorate([
     __metadata("design:paramtypes", [String, String, Object]),
     __metadata("design:returntype", Promise)
 ], BaseController.prototype, "obtenerPorId", null);
+__decorate([
+    (0, common_1.Put)('/est/dormir'),
+    __param(0, (0, common_1.Headers)('Authorization')),
+    __param(1, (0, common_1.Headers)('usuario')),
+    __param(2, (0, common_1.Res)()),
+    __param(3, (0, common_1.Body)('base')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, Object, String]),
+    __metadata("design:returntype", Promise)
+], BaseController.prototype, "dormir", null);
+__decorate([
+    (0, common_1.Put)('/est/trabajar'),
+    __param(0, (0, common_1.Headers)('Authorization')),
+    __param(1, (0, common_1.Headers)('usuario')),
+    __param(2, (0, common_1.Res)()),
+    __param(3, (0, common_1.Body)('base')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, Object, String]),
+    __metadata("design:returntype", Promise)
+], BaseController.prototype, "trabajar", null);
+__decorate([
+    (0, common_1.Put)('/est/modelar'),
+    __param(0, (0, common_1.Headers)('Authorization')),
+    __param(1, (0, common_1.Headers)('usuario')),
+    __param(2, (0, common_1.Res)()),
+    __param(3, (0, common_1.Body)('base')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, Object, String]),
+    __metadata("design:returntype", Promise)
+], BaseController.prototype, "modelar", null);
+__decorate([
+    (0, common_1.Put)('/est/cerrar'),
+    __param(0, (0, common_1.Headers)('Authorization')),
+    __param(1, (0, common_1.Headers)('usuario')),
+    __param(2, (0, common_1.Res)()),
+    __param(3, (0, common_1.Body)('base')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, Object, String]),
+    __metadata("design:returntype", Promise)
+], BaseController.prototype, "cerrar", null);
+__decorate([
+    (0, common_1.Put)('/est/preprocesar'),
+    __param(0, (0, common_1.Headers)('Authorization')),
+    __param(1, (0, common_1.Headers)('usuario')),
+    __param(2, (0, common_1.Res)()),
+    __param(3, (0, common_1.Body)('base')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, Object, String]),
+    __metadata("design:returntype", Promise)
+], BaseController.prototype, "preprocesarDatos", null);
+__decorate([
+    (0, common_1.Put)('/version'),
+    __param(0, (0, common_1.Headers)('Authorization')),
+    __param(1, (0, common_1.Headers)('usuario')),
+    __param(2, (0, common_1.Res)()),
+    __param(3, (0, common_1.Body)('base')),
+    __param(4, (0, common_1.Body)('archivo')),
+    __param(5, (0, common_1.Body)('registros')),
+    __param(6, (0, common_1.Body)('dueño')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, Object, String, String, Number, String]),
+    __metadata("design:returntype", Promise)
+], BaseController.prototype, "insertarVersion", null);
 BaseController = __decorate([
     (0, common_1.Controller)('base'),
     __metadata("design:paramtypes", [base_service_1.BaseService])

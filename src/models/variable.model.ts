@@ -37,6 +37,11 @@ export const variableSchema = new mongoose.Schema({
         ,requiered:true
     }
     , log:[String]
+    ,fecha:{
+        default:Date.now
+        ,required:true
+        ,type:Date
+    }
 }, {collection:'variable'})
 
 export interface VariableModel extends mongoose.Document{
@@ -48,4 +53,5 @@ export interface VariableModel extends mongoose.Document{
     ,descripcion:string
     ,base:ObjectId
     ,log:string[]
+    
 }
