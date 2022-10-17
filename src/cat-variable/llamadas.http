@@ -1,0 +1,79 @@
+###
+
+get http://172.18.231.1:5000/catvar/rlavagnino
+
+{
+
+}
+
+
+###!SECTION insertar
+put http://172.18.231.1:5000/catvar
+Authorization: DTSI IS GAH
+usuario: rlavagnino
+Content-Type: application/json
+
+{
+    "dueño":"rlavagnino"
+    ,"descr": "persona3"
+    ,"imagen":"ala"
+    ,"variables":[
+        "63457882cb461d1d23553c04"
+        ,"63457887cb461d1d23553c07"
+    ]
+}
+
+###!SECTION insertar
+delete http://172.18.231.1:5000/catvar
+Authorization: DTSI IS GAH
+usuario: rlavagnino
+Content-Type: application/json
+
+{
+ "cat":"63459fd0b724f38db40fee0e"   
+}
+
+###!SECTION insertar
+put http://172.18.231.1:5000/catvar/var
+Authorization: DTSI IS GAH
+usuario: rlavagnino
+Content-Type: application/json
+
+{
+   "variables":[
+        "63457882cb461d1d23553c04"
+        ,"63457887cb461d1d23553c07"
+        ,"6345788bcb461d1d23553c0a"
+    ]
+    ,"cat":"6345a04c6a91e2a8a13fdf2d"
+}
+
+
+###!SECTION eliminar var
+delete http://172.18.231.1:5000/catvar/var
+Authorization: DTSI IS GAH
+usuario: rlavagnino
+Content-Type: application/json
+
+{
+   "variables":[
+        "63457887cb461d1d23553c07"
+    ]
+    ,"cat":"6345a04c6a91e2a8a13fdf2d"
+}
+
+
+
+
+
+###!SECTION eliminar var
+patch http://172.18.231.1:5000/catvar
+Authorization: DTSI IS GAH
+usuario: rlavagnino
+Content-Type: application/json
+
+{
+ "cat":"6345a04c6a91e2a8a13fdf2d"
+ ,"dueño":"gato"
+ ,"descripcion":"carro"
+}

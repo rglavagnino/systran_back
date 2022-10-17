@@ -475,6 +475,7 @@ export class BaseService {
     reg: number,
   ) {
     const idFuncion = 3007;
+    const funcionDescr = 'INSERTANDO VERSION'
     loggerId(usuario, 'Se esta creando una version', idFuncion);
 
     let banFaltante = '';
@@ -537,6 +538,18 @@ export class BaseService {
     };
 
     versionEncontrada.version.push(nuevaVersion);
+
+    const log = formarLog(
+      usuario,
+      idFuncion,
+      funcionDescr,
+      'Se esta insertando una nueva version',
+      verNueva,
+    );
+
+    
+    versionEncontrada.log.push(log);
+
     let baseModificada = await versionEncontrada.save();
 
     if (!baseModificada)
@@ -566,6 +579,7 @@ export class BaseService {
    */
   async cambiarEstado(estadoNuevo: string, base: string, usuario: string) {
     const idFuncion = 3008;
+    const funcionDescr = 'CAMBIO DE ESTADO'
     //revisamos si viene la informacion
     loggerId(
       usuario,
@@ -655,6 +669,19 @@ export class BaseService {
     };
 
     baseEncontrada.estado.push(nuevoEstado);
+
+
+    const log = formarLog(
+      usuario,
+      idFuncion,
+      funcionDescr,
+      'Se esta cambiando el estado de ' + estadoActivo.estado + ' a ' + estadoNuevo,
+      estadoNuevo,
+    );
+
+    
+    baseEncontrada.log.push(log);
+
 
     baseEncontrada = await baseEncontrada.save();
     if (!baseEncontrada)

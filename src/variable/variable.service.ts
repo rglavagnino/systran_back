@@ -4,7 +4,7 @@ import mongoose, { Model } from 'mongoose';
 import { VariableModel } from 'src/models/variable.model';
 import { formarLog, loggerId, obtenerTipo, salidaYLog } from 'src/utils/salida';
 import { ObjectID } from 'bson';
-import { Console } from 'console';
+
 
 @Injectable()
 export class VariableService {

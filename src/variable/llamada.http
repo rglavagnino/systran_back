@@ -20,12 +20,12 @@ Content-Type: application/json
 usuario: rlavagnino
 
 {
-     "nombre":"variable2",
+     "nombre":"variable3",
       "norm":"vv",
       "codigo":"codigo",
       "desechado":1,
       "descripcion":"descr",
-      "base":"633f1e301da43ac6fd15f5b8"
+      "base":"63448a36a88b5ff8c83e3fb8"
 }
 
 

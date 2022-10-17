@@ -26,6 +26,7 @@ const auth_service_1 = require("./auth/auth.service");
 const auth_model_1 = require("./models/auth.model");
 const base_module_1 = require("./base/base.module");
 const variable_module_1 = require("./variable/variable.module");
+const cat_variable_module_1 = require("./cat-variable/cat-variable.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -36,7 +37,7 @@ AppModule = __decorate([
                 { name: 'Estado', schema: estadoBitacora_model_1.estadoBitacoraSchema },
                 { name: 'ElementoBitacora', schema: elementoBitacora_model_1.elementoBitacoraSchema },
                 { name: 'authSchema', schema: auth_model_1.authSchema }
-            ]), auth_module_1.AuthModule, base_module_1.BaseModule, variable_module_1.VariableModule
+            ]), auth_module_1.AuthModule, base_module_1.BaseModule, variable_module_1.VariableModule, cat_variable_module_1.CatVariableModule
         ],
         controllers: [app_controller_1.AppController, cat_controller_1.CatController, auth_controller_1.AuthController],
         providers: [app_service_1.AppService, cat_service_1.CatService, auth_service_1.AuthService],

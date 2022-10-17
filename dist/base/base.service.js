@@ -250,6 +250,7 @@ let BaseService = class BaseService {
     }
     async insertarVersion(usuario, base, dueño, arch, reg) {
         const idFuncion = 3007;
+        const funcionDescr = 'INSERTANDO VERSION';
         (0, salida_1.loggerId)(usuario, 'Se esta creando una version', idFuncion);
         let banFaltante = '';
         if (!dueño)
@@ -283,6 +284,8 @@ let BaseService = class BaseService {
             numero_registros: reg,
         };
         versionEncontrada.version.push(nuevaVersion);
+        const log = (0, salida_1.formarLog)(usuario, idFuncion, funcionDescr, 'Se esta insertando una nueva version', verNueva);
+        versionEncontrada.log.push(log);
         let baseModificada = await versionEncontrada.save();
         if (!baseModificada)
             return (0, salida_1.salidaYLog)(usuario, idFuncion, 'Error al crear la version', (0, salida_1.obtenerTipo)(3));
@@ -292,6 +295,7 @@ let BaseService = class BaseService {
     }
     async cambiarEstado(estadoNuevo, base, usuario) {
         const idFuncion = 3008;
+        const funcionDescr = 'CAMBIO DE ESTADO';
         (0, salida_1.loggerId)(usuario, 'Tratando el el cambio de esta a ' + estadoNuevo, idFuncion);
         let banFaltante = '';
         if (!estadoNuevo)
@@ -334,6 +338,8 @@ let BaseService = class BaseService {
             estado: estadoNuevo,
         };
         baseEncontrada.estado.push(nuevoEstado);
+        const log = (0, salida_1.formarLog)(usuario, idFuncion, funcionDescr, 'Se esta cambiando el estado de ' + estadoActivo.estado + ' a ' + estadoNuevo, estadoNuevo);
+        baseEncontrada.log.push(log);
         baseEncontrada = await baseEncontrada.save();
         if (!baseEncontrada)
             return (0, salida_1.salidaYLog)(usuario, idFuncion, 'No se pudo registrar el nuevo estado', (0, salida_1.obtenerTipo)(3));
