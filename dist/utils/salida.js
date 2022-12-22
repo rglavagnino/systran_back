@@ -18,7 +18,7 @@ function formarLog(usuario, funcion, operacion, msg, body) {
     const ahora = new Date();
     const sep = '|';
     return (ahora.toLocaleString() + sep +
-        usuario + sep + funcion + sep + operacion + sep + msg + JSON.stringify(body));
+        usuario + sep + funcion + sep + operacion + sep + msg + sep + JSON.stringify(body));
 }
 exports.formarLog = formarLog;
 function crearSalida(mensaje, tipo, debug, datos) {

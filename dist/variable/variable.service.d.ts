@@ -8,4 +8,6 @@ export declare class VariableService {
     actualizarVariable(variable: string, usuario: string, nombre?: string, norm?: string, codigo?: string, desechado?: number, descr?: string): Promise<import("../utils/salida.model").salida>;
     obtenerVariableBase(base: any, usuario: string): Promise<import("../utils/salida.model").salida>;
     obtenerTodasVariables(usuario: string): Promise<import("../utils/salida.model").salida>;
+    obtenerDataporBase(usuario: string, base: string): Promise<import("../utils/salida.model").salida>;
+    obtenerData(usuario: string): Promise<import("../utils/salida.model").salida>;
 }

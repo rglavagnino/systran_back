@@ -11,6 +11,7 @@ import {
 import mongoose, { Model, ObjectId } from 'mongoose';
 import { ObjectID } from 'bson';
 import { EstadoBase } from './cat';
+import { MiLogger } from 'src/utils/logs';
 
 @Injectable()
 export class BaseService {
@@ -693,4 +694,77 @@ export class BaseService {
       );
     return salidaYLog(usuario, idFuncion, 'Exito en guardar', obtenerTipo(2));
   }
+
+
+  /**
+ * ANCHOR 3009 - Obtener data
+ * @param usuario 
+ * @returns 
+ */
+
+   async obtenerData(usuario:string) {
+    const idFuncion = 3009;
+    const funDescr = 'Obteniendo el trabajando';
+    const milog = new MiLogger(usuario,idFuncion,funDescr)
+
+    const queryAggregation = [
+ 
+   
+
+      {
+     
+        $unwind: {
+          path: '$estado',
+          preserveNullAndEmptyArrays: true
+        }
+     },
+  
+  {
+  
+     $unwind: {
+       path: '$version',
+       preserveNullAndEmptyArrays: true
+     }
+  },
+     {
+       
+        $match: {
+          $and:[
+           {activo:1},
+     {"estado.activo":1 },
+     {$or:[
+      {"version.activo":1},
+      {"version.activo":null}
+    ]}
+          ]
+          
+        }
+     },
+     {
+       
+        $project: {
+          _id:1
+          ,base:1
+          ,fecha:1
+          ,nombreBase:{$toUpper:"$nombre"}
+          ,tipoBase: {$toUpper:"$tipo"}
+          ,deptoBase: {$toUpper:"$departamento"}
+          ,versionBase: {$toUpper:"$version.version"}
+          ,registrosBase: {$toUpper:"$version.numero_registros"}
+          ,archivoBase: {$toUpper:"$version.nombre_archivo"}
+          ,estadoBase:{$toUpper:"$estado.estado"}
+        }
+     }
+  ]
+     milog.crearLog('Iniciando obteniendo los datos')
+     let vars = await this.baseModel.aggregate(queryAggregation)
+
+     if (!vars) return milog.crearLogYSalida('No se pudo obtener la base',3)
+     return milog.crearLogYSalida('Exito en obtener la base',2,vars)
+  }
+
+
 }
+
+
+

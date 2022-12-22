@@ -41,6 +41,7 @@ const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = __importStar(require("mongoose"));
 const salida_1 = require("../utils/salida");
 const bson_1 = require("bson");
+const logs_1 = require("../utils/logs");
 let VariableService = class VariableService {
     constructor(variableModel) {
         this.variableModel = variableModel;
@@ -212,6 +213,63 @@ let VariableService = class VariableService {
         if (!varEncontradas)
             return (0, salida_1.salidaYLog)(usuario, idFuncion, 'No se pudo obtener los datos de las variables', (0, salida_1.obtenerTipo)(3));
         return (0, salida_1.salidaYLog)(usuario, idFuncion, 'Exito en obtener ' + varEncontradas.length + ' variables', (0, salida_1.obtenerTipo)(1), varEncontradas);
+    }
+    async obtenerDataporBase(usuario, base) {
+        const idFuncion = 4006;
+        const funDescr = 'Obteniendo el trabajando';
+        const milog = new logs_1.MiLogger(usuario, idFuncion, funDescr);
+        milog.crearLog('Buscando las variables de una base');
+        if (!base)
+            return milog.crearLogYSalida('No se puede obtener los datos, falta la base', 3);
+        const queryAggregation = [
+            {
+                $match: {
+                    activo: 1,
+                    base: new bson_1.ObjectId(base)
+                }
+            }, {
+                $project: {
+                    nombre: { $toUpper: "$nombre_variable" },
+                    codigo: { $toUpper: "$codigo_variable" },
+                    util: "$desechado",
+                    descripcion: { $toUpper: "$descripcion" },
+                    base: 1,
+                    fecha: 1
+                }
+            }
+        ];
+        milog.crearLog('Iniciando obteniendo los datos');
+        let vars = await this.variableModel.aggregate(queryAggregation);
+        if (!vars)
+            return milog.crearLogYSalida('No se pudo obtener las variables', 3);
+        return milog.crearLogYSalida('Exito en obtener las variables', 2, vars);
+    }
+    async obtenerData(usuario) {
+        const idFuncion = 4007;
+        const funDescr = 'Obteniendo el trabajando';
+        const milog = new logs_1.MiLogger(usuario, idFuncion, funDescr);
+        milog.crearLog('Buscando todas las variables');
+        const queryAggregation = [
+            {
+                $match: {
+                    activo: 1
+                }
+            }, {
+                $project: {
+                    nombre: { $toUpper: "$nombre_variable" },
+                    codigo: { $toUpper: "$codigo_variable" },
+                    util: "$desechado",
+                    descripcion: { $toUpper: "$descripcion" },
+                    base: 1,
+                    fecha: 1
+                }
+            }
+        ];
+        milog.crearLog('Iniciando obteniendo los datos');
+        let vars = await this.variableModel.aggregate(queryAggregation);
+        if (!vars)
+            return milog.crearLogYSalida('No se pudo obtener las variables', 3);
+        return milog.crearLogYSalida('Exito en obtener las variables', 2, vars);
     }
 };
 VariableService = __decorate([

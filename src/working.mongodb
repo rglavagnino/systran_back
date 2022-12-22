@@ -1,0 +1,94 @@
+// // MongoDB Playground
+// // To disable this template go to Settings | MongoDB | Use Default Template For Playground.
+// // Make sure you are connected to enable completions and to be able to run a playground.
+// // Use Ctrl+Space inside a snippet or a string literal to trigger completions.
+
+// // Select the database to use.
+// const base  = "SysBasePrueba"
+// use(base)
+// db.categoria_variable.find({
+// activo:1
+// , _id:new ObjectId('6345a04c6a91e2a8a13fdf2d')
+// })
+
+
+
+// const base  = "SysBasePrueba"
+// use(base)
+// db.variable.find({
+//    activo:1
+// },{_id:1})
+
+
+// const base  = "SysBasePrueba"
+// use(base)
+// db.working.find({})
+
+
+
+const base  = "SysBasePrueba"
+use(base)
+db.working.aggregate([
+   {
+
+      $lookup: {
+        from: 'base',
+        localField: 'base',
+        foreignField: '_id',
+        as: 'basededatos'
+      }
+   },
+   {
+   
+      $unwind: {
+        path: '$basededatos',
+        preserveNullAndEmptyArrays: true
+      }
+   }
+   ,
+
+    {
+   
+      $unwind: {
+        path: '$basededatos.estado',
+        preserveNullAndEmptyArrays: true
+      }
+   },
+
+{
+
+   $unwind: {
+     path: '$basededatos.version',
+     preserveNullAndEmptyArrays: true
+   }
+},
+   {
+     
+      $match: {
+        $and:[
+         {activo:1},
+   {"basededatos.estado.activo":1 },
+   {"basededatos.version.activo":1}
+        ]
+        
+      }
+   },
+   {
+     
+      $project: {
+        _id:1
+        ,operacion:1
+        ,base:1
+        ,fecha:1
+        ,nombreBase:"$basededatos.nombre"
+      ,tipoBase: "$basededatos.tipo"
+      ,deptoBase: "$basededatos.departamento"
+      ,versionBase: "$basededatos.version.version"
+      ,registrosBase: "$basededatos.version.numero_registros"
+      ,archivoBase: "$basededatos.version.nombre_archivo"
+      ,estadoBase:"$basededatos.estado.estado"
+      }
+   }
+])
+
+

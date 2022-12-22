@@ -1,10 +1,15 @@
 version: "3"
 services:
   #nombre del servicio
-  appdac-:
-    container_name: appdac-
+  dacsharp:
+    container_name: dacsharp
     restart: always
     build: .    
     #puertos
     ports:
       - "5000:5000"
+    networks:
+      - dlake-k8_datadac
+networks:
+  dlake-k8_datadac:
+    external: true

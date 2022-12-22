@@ -55,13 +55,23 @@ let VariableController = class VariableController {
         const status = (0, salida_1.obtenerStatusHttp)(sal);
         return res.status(status).json(sal);
     }
-    async obtenerVariablesBase(res, usuario, base) {
-        const sal = await this.varSrv.obtenerVariableBase(base, usuario);
+    async obtenervarBase(res, usuario, token, base) {
+        if (!token || !usuario) {
+            return res.status(common_1.HttpStatus.FORBIDDEN);
+        }
+        if (token !== (0, autenta_1.obtenerPass)())
+            return res.status(common_1.HttpStatus.FORBIDDEN);
+        const sal = await this.varSrv.obtenerDataporBase(usuario, base);
         const status = (0, salida_1.obtenerStatusHttp)(sal);
         return res.status(status).json(sal);
     }
-    async obtenerTodasVariables(res, usuario) {
-        const sal = await this.varSrv.obtenerTodasVariables(usuario);
+    async otodasvar(res, usuario, token, base) {
+        if (!token || !usuario) {
+            return res.status(common_1.HttpStatus.FORBIDDEN);
+        }
+        if (token !== (0, autenta_1.obtenerPass)())
+            return res.status(common_1.HttpStatus.FORBIDDEN);
+        const sal = await this.varSrv.obtenerData(usuario);
         const status = (0, salida_1.obtenerStatusHttp)(sal);
         return res.status(status).json(sal);
     }
@@ -107,22 +117,25 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], VariableController.prototype, "actualizar", null);
 __decorate([
-    (0, common_1.Get)('/:usuario/:base'),
+    (0, common_1.Post)('/data/base'),
     __param(0, (0, common_1.Res)()),
-    __param(1, (0, common_1.Param)('usuario')),
-    __param(2, (0, common_1.Param)('base')),
+    __param(1, (0, common_1.Headers)('usuario')),
+    __param(2, (0, common_1.Headers)('Authorization')),
+    __param(3, (0, common_1.Body)('base')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String, String]),
+    __metadata("design:paramtypes", [Object, String, String, String]),
     __metadata("design:returntype", Promise)
-], VariableController.prototype, "obtenerVariablesBase", null);
+], VariableController.prototype, "obtenervarBase", null);
 __decorate([
-    (0, common_1.Get)(':usuario'),
+    (0, common_1.Post)('/data'),
     __param(0, (0, common_1.Res)()),
-    __param(1, (0, common_1.Param)('usuario')),
+    __param(1, (0, common_1.Headers)('usuario')),
+    __param(2, (0, common_1.Headers)('Authorization')),
+    __param(3, (0, common_1.Body)('base')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:paramtypes", [Object, String, String, String]),
     __metadata("design:returntype", Promise)
-], VariableController.prototype, "obtenerTodasVariables", null);
+], VariableController.prototype, "otodasvar", null);
 VariableController = __decorate([
     (0, common_1.Controller)('var'),
     __metadata("design:paramtypes", [variable_service_1.VariableService])

@@ -1,0 +1,93 @@
+const base  = "SysBasePrueba"
+use(base)
+
+
+
+db.categoria_variable.aggregate(
+    // [
+    //     {
+  
+    //         $unwind: {
+    //           path: '$variables',
+    //           preserveNullAndEmptyArrays: true
+    //         }
+    //     },
+
+    //     {
+          
+    //         $lookup: {
+    //           from: 'variable',
+    //           localField: 'variables.variable',
+    //           foreignField: '_id',
+    //           as: 'variable2'
+    //         }
+    //     },
+
+       
+    //     {
+         
+    //         $unwind: {
+    //           path: '$variable2',
+    //           preserveNullAndEmptyArrays: true
+    //         }
+    //     },
+    //      {
+
+    //         $lookup: {
+    //           from: 'base',
+    //           localField: 'variable2.base',
+    //           foreignField: '_id',
+    //           as: 'bases'
+    //         }
+    //     },
+    //     {
+           
+    //         $unwind: {
+    //           path: '$bases',
+
+    //           preserveNullAndEmptyArrays: true
+    //         }
+    //     },
+    //     {
+    //     $match: {
+    //       $and:[
+    //         {activo:1},
+    //         {$or:[
+    //             {"variables.activo":1},
+    //             {"variables.activo":null}
+    //         ]}
+    //       ]
+    //     }}
+    //     ,
+    //     {
+           
+    //         $project: {
+    //           categoria: {$toUpper:"$descripcion"}
+    //           ,imagen:1
+    //           ,nombre_variable:{$toUpper:"$variable2.nombre_variable"}
+    //           ,codigo_variable:{$toUpper:"$variable2.codigo_variable"}
+    //           ,descripcion_variable:{$toUpper:"$variable2.descripcion"}
+    //           ,base:{$toUpper:"$bases.nombre"}
+
+
+    //         }
+    //     }
+    // ]
+
+    [
+        {
+        $match: {
+          $and:[
+            {activo:1}
+          ]
+        }}
+        ,{
+            
+            $project: {
+              activo:1
+              ,descripcion:1,
+              dueño:1
+            }
+        }
+    ]
+)

@@ -26,7 +26,7 @@ export function formarLog(usuario, funcion, operacion, msg, body: any) {
   const sep = '|';
   return (
     ahora.toLocaleString() + sep +
-    usuario + sep + funcion + sep + operacion + sep + msg + JSON.stringify(body)
+    usuario + sep + funcion + sep + operacion + sep + msg +sep+ JSON.stringify(body)
   );
 }
 

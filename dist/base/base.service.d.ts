@@ -16,4 +16,5 @@ export declare class BaseService {
     private crearNomenclaturaBase;
     insertarVersion(usuario: string, base: string, dueño: string, arch: string, reg: number): Promise<import("../utils/salida.model").salida>;
     cambiarEstado(estadoNuevo: string, base: string, usuario: string): Promise<import("../utils/salida.model").salida>;
+    obtenerData(usuario: string): Promise<import("../utils/salida.model").salida>;
 }

@@ -1,0 +1,38 @@
+###!SECTION insertar
+
+PUT http://localhost:5000/work
+Content-Type: application/json
+usuario: rlavagnino
+Authorization: DTSI IS GAH
+
+
+{
+    "base": "63448a36a88b5ff8c83e3fb8"
+    ,"operacion": "Iniciando a trabajar"
+
+}
+
+###!SECTION insertar
+
+delete http://localhost:5000/work
+Content-Type: application/json
+usuario: rlavagnino
+Authorization: DTSI IS GAH
+
+
+{
+    "base": "63448a36a88b5ff8c83e3fb8"
+}
+
+
+###!SECTION insertar
+
+post http://localhost:5000/work/data
+Content-Type: application/json
+usuario: rlavagnino
+Authorization: DTSI IS GAH
+
+
+{
+   
+}

@@ -18,22 +18,28 @@ import { authSchema } from './models/auth.model';
 import { BaseModule } from './base/base.module';
 import { VariableModule } from './variable/variable.module';
 import { CatVariableModule } from './cat-variable/cat-variable.module';
-
-
+import { WorkModule } from './work/work.module';
 
 @Module({
-  imports: [VivoModule, MongooseModule.forRoot(obtenerConexiones(1)), RaiddModule
-   
-  ,  CatModule,MongooseModule.forFeature([
-    {name:'Tipo', schema: tipoBitacoraSchema}
-    ,{name:'Estado', schema:estadoBitacoraSchema}
-    ,{name:'ElementoBitacora', schema:elementoBitacoraSchema}
-    ,{name: 'authSchema', schema:authSchema}
-  ]), AuthModule, BaseModule, VariableModule, CatVariableModule
+  imports: [
+    WorkModule,
+    VivoModule,
+    MongooseModule.forRoot(obtenerConexiones(1)),
+    RaiddModule,
+
+    CatModule,
+    MongooseModule.forFeature([
+      { name: 'Tipo', schema: tipoBitacoraSchema },
+      { name: 'Estado', schema: estadoBitacoraSchema },
+      { name: 'ElementoBitacora', schema: elementoBitacoraSchema },
+      { name: 'authSchema', schema: authSchema },
+    ]),
+    AuthModule,
+    BaseModule,
+    VariableModule,
+    CatVariableModule,
   ],
   controllers: [AppController, CatController, AuthController],
   providers: [AppService, CatService, AuthService],
 })
-export class AppModule {
-  
-}
+export class AppModule {}

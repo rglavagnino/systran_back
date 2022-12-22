@@ -6,7 +6,7 @@ import {
   HttpStatus,
   Headers,
   Put,
-  Param,
+  Param,Post,
   Delete,
   Get,
 } from '@nestjs/common';
@@ -290,4 +290,36 @@ console.log(usuario)
   }
 
 
+
+
+
+  @Post('/data')
+  async obtenerBases(
+    @Headers('Authorization') token: string
+    ,@Headers('usuario') usuario:string
+    ,@Res() res:Response
+
+
+  ){
+    if (!token || !usuario) {
+      return res.status(HttpStatus.FORBIDDEN).json({});
+    }
+
+    if (token !== obtenerPass()) {
+      return res.status(HttpStatus.FORBIDDEN).json({});
+    }
+
+console.log(usuario)
+    const resp = await  this.baseSrv.obtenerData(usuario)
+    const status = obtenerStatusHttp(resp);
+    return res.status(status).json(resp);
+
+    
+  }
+
+
+
 }
+
+
+

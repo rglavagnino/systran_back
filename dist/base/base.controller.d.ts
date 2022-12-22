@@ -14,4 +14,5 @@ export declare class BaseController {
     cerrar(token: string, usuario: string, res: Response, base: string): Promise<Response<any, Record<string, any>>>;
     preprocesarDatos(token: string, usuario: string, res: Response, base: string): Promise<Response<any, Record<string, any>>>;
     insertarVersion(token: string, usuario: string, res: Response, base: string, archivo: string, registros: number, dueño: string): Promise<Response<any, Record<string, any>>>;
+    obtenerBases(token: string, usuario: string, res: Response): Promise<Response<any, Record<string, any>>>;
 }

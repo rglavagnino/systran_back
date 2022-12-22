@@ -1,0 +1,82 @@
+// // MongoDB Playground
+// // To disable this template go to Settings | MongoDB | Use Default Template For Playground.
+// // Make sure you are connected to enable completions and to be able to run a playground.
+// // Use Ctrl+Space inside a snippet or a string literal to trigger completions.
+
+// // Select the database to use.
+// const base  = "SysBasePrueba"
+// use(base)
+// db.categoria_variable.find({
+// activo:1
+// , _id:new ObjectId('6345a04c6a91e2a8a13fdf2d')
+// })
+
+
+
+// const base  = "SysBasePrueba"
+// use(base)
+// db.variable.find({
+//    activo:1
+// },{_id:1})
+
+
+// const base  = "SysBasePrueba"
+// use(base)
+// db.working.find({})
+
+
+
+const base  = "SysBasePrueba"
+use(base)
+db.base.aggregate([
+ 
+   
+
+    {
+   
+      $unwind: {
+        path: '$estado',
+        preserveNullAndEmptyArrays: true
+      }
+   },
+
+{
+
+   $unwind: {
+     path: '$version',
+     preserveNullAndEmptyArrays: true
+   }
+},
+   {
+     
+      $match: {
+        $and:[
+         {activo:1},
+         {"estado.activo":1 },
+         {$or:[
+            {"version.activo":1},
+            {"version.activo":null}
+          ]}
+
+        ]
+        
+      }
+   },
+   {
+     
+      $project: {
+        _id:1
+        ,base:1
+        ,fecha:1
+        ,nombreBase:{$toUpper:"$nombre"}
+      ,tipoBase: {$toUpper:"$tipo"}
+      ,deptoBase: {$toUpper:"$departamento"}
+      ,versionBase: {$toUpper:"$version.version"}
+      ,registrosBase: {$toUpper:"$version.numero_registros"}
+      ,archivoBase: {$toUpper:"$version.nombre_archivo"}
+      ,estadoBase:{$toUpper:"$estado.estado"}
+      }
+   }
+])
+
+

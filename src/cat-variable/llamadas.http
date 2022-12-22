@@ -1,9 +1,22 @@
 ###
 
-get http://172.18.231.1:5000/catvar/rlavagnino
+post http://172.18.231.1:5000/catvar/data/cat
+Authorization: DTSI IS GAH
+usuario: rlavagnino
+Content-Type: application/json
 
 {
 
+}
+###
+
+post http://172.18.231.1:5000/catvar/data/var
+Authorization: DTSI IS GAH
+usuario: rlavagnino
+Content-Type: application/json
+
+{
+    "cat":"6345a0ef6a91e2a8a13fdf33"
 }
 
 

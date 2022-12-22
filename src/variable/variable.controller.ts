@@ -3,13 +3,13 @@ import {
   Get,
   Put,
   Patch,
-  Delete,
+  Delete,Post,
   Res,
   Body,
   Headers,
   Param,
   HttpStatus,
-  Header,
+
 } from '@nestjs/common';
 import { Response } from 'express';
 import { obtenerPass } from 'src/utils/autenta';
@@ -100,37 +100,78 @@ export class VariableController {
     return res.status(status).json(sal);
   }
 
-  @Get('/:usuario/:base')
-  async obtenerVariablesBase(
+  // @Get('/:usuario/:base')
+  // async obtenerVariablesBase(
+  //   @Res() res: Response,
+
+  //   @Param('usuario') usuario: string,
+  //   @Param('base') base: string,
+  // ) {
+  //   // if (!token) {
+  //   //   return res.status(HttpStatus.FORBIDDEN);
+  //   // }
+
+  //   // if (token !== obtenerPass()) return res.status(HttpStatus.FORBIDDEN);
+
+  //   const sal = await this.varSrv.obtenerVariableBase(base, usuario);
+  //   const status = obtenerStatusHttp(sal);
+  //   return res.status(status).json(sal);
+  // }
+
+  // @Get(':usuario')
+  // async obtenerTodasVariables(
+  //   @Res() res: Response,
+  //   @Param('usuario') usuario: string,
+  // ) {
+  //   // if (!token) {
+  //   //     return res.status(HttpStatus.FORBIDDEN);
+  //   //   }
+
+  //   //   if (token !== obtenerPass()) return res.status(HttpStatus.FORBIDDEN);
+
+  //   const sal = await this.varSrv.obtenerTodasVariables(usuario);
+  //   const status = obtenerStatusHttp(sal);
+  //   return res.status(status).json(sal);
+  // }
+
+
+
+  @Post('/data/base')
+  async obtenervarBase(
     @Res() res: Response,
-
-    @Param('usuario') usuario: string,
-    @Param('base') base: string,
+    @Headers('usuario') usuario: string,
+    @Headers('Authorization') token :string,
+    @Body('base') base:string,
   ) {
-    // if (!token) {
-    //   return res.status(HttpStatus.FORBIDDEN);
-    // }
+    if (!token || !usuario) {
+        return res.status(HttpStatus.FORBIDDEN);
+      }
 
-    // if (token !== obtenerPass()) return res.status(HttpStatus.FORBIDDEN);
+      if (token !== obtenerPass()) return res.status(HttpStatus.FORBIDDEN);
 
-    const sal = await this.varSrv.obtenerVariableBase(base, usuario);
+    const sal = await this.varSrv.obtenerDataporBase(usuario,base);
     const status = obtenerStatusHttp(sal);
     return res.status(status).json(sal);
   }
 
-  @Get(':usuario')
-  async obtenerTodasVariables(
+
+  @Post('/data')
+  async otodasvar(
     @Res() res: Response,
-    @Param('usuario') usuario: string,
+    @Headers('usuario') usuario: string,
+    @Headers('Authorization') token :string,
+    @Body('base') base:string,
   ) {
-    // if (!token) {
-    //     return res.status(HttpStatus.FORBIDDEN);
-    //   }
+    if (!token || !usuario) {
+        return res.status(HttpStatus.FORBIDDEN);
+      }
 
-    //   if (token !== obtenerPass()) return res.status(HttpStatus.FORBIDDEN);
+      if (token !== obtenerPass()) return res.status(HttpStatus.FORBIDDEN);
 
-    const sal = await this.varSrv.obtenerTodasVariables(usuario);
+    const sal = await this.varSrv.obtenerData(usuario);
     const status = obtenerStatusHttp(sal);
     return res.status(status).json(sal);
   }
+
+
 }

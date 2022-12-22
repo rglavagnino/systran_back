@@ -132,6 +132,18 @@ let BaseController = class BaseController {
         const status = (0, salida_1.obtenerStatusHttp)(resp);
         return res.status(status).json(resp);
     }
+    async obtenerBases(token, usuario, res) {
+        if (!token || !usuario) {
+            return res.status(common_1.HttpStatus.FORBIDDEN).json({});
+        }
+        if (token !== (0, autenta_1.obtenerPass)()) {
+            return res.status(common_1.HttpStatus.FORBIDDEN).json({});
+        }
+        console.log(usuario);
+        const resp = await this.baseSrv.obtenerData(usuario);
+        const status = (0, salida_1.obtenerStatusHttp)(resp);
+        return res.status(status).json(resp);
+    }
 };
 __decorate([
     (0, common_1.Put)(),
@@ -250,6 +262,15 @@ __decorate([
     __metadata("design:paramtypes", [String, String, Object, String, String, Number, String]),
     __metadata("design:returntype", Promise)
 ], BaseController.prototype, "insertarVersion", null);
+__decorate([
+    (0, common_1.Post)('/data'),
+    __param(0, (0, common_1.Headers)('Authorization')),
+    __param(1, (0, common_1.Headers)('usuario')),
+    __param(2, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, Object]),
+    __metadata("design:returntype", Promise)
+], BaseController.prototype, "obtenerBases", null);
 BaseController = __decorate([
     (0, common_1.Controller)('base'),
     __metadata("design:paramtypes", [base_service_1.BaseService])

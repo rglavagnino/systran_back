@@ -9,4 +9,5 @@ export declare class CatVariableService {
     insertarVariables(usuario: string, cat: string, variables: string[]): Promise<import("../utils/salida.model").salida>;
     eliminarVariables(cat: string, variable: string[], usuario: string): Promise<import("../utils/salida.model").salida>;
     actualizarCategorias(usuario: string, cat: string, descripcion?: string, dueño?: string): Promise<import("../utils/salida.model").salida>;
+    obtenerData(usuario: string, categoria: string): Promise<import("../utils/salida.model").salida>;
 }

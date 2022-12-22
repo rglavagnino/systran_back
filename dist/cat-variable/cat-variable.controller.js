@@ -21,8 +21,25 @@ let CatVariableController = class CatVariableController {
     constructor(catSrv) {
         this.catSrv = catSrv;
     }
-    async obtenerCat(usuario, res) {
+    async obtenerCat(usuario, token, res) {
+        if (!token || !usuario) {
+            return res.status(common_1.HttpStatus.FORBIDDEN).json({});
+        }
+        if (token !== (0, autenta_1.obtenerPass)()) {
+            return res.status(common_1.HttpStatus.FORBIDDEN).json({});
+        }
         const resp = await this.catSrv.obtenerCategoria(usuario);
+        const stat = (0, salida_1.obtenerStatusHttp)(resp);
+        return res.status(stat).json(resp);
+    }
+    async obtenerCat2(usuario, token, res, cat) {
+        if (!token || !usuario) {
+            return res.status(common_1.HttpStatus.FORBIDDEN).json({});
+        }
+        if (token !== (0, autenta_1.obtenerPass)()) {
+            return res.status(common_1.HttpStatus.FORBIDDEN).json({});
+        }
+        const resp = await this.catSrv.obtenerData(usuario, cat);
         const stat = (0, salida_1.obtenerStatusHttp)(resp);
         return res.status(stat).json(resp);
     }
@@ -83,13 +100,24 @@ let CatVariableController = class CatVariableController {
     }
 };
 __decorate([
-    (0, common_1.Get)(':usuario'),
-    __param(0, (0, common_1.Param)('usuario')),
-    __param(1, (0, common_1.Res)()),
+    (0, common_1.Post)('/data/cat'),
+    __param(0, (0, common_1.Headers)('usuario')),
+    __param(1, (0, common_1.Headers)('Authorization')),
+    __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:paramtypes", [String, String, Object]),
     __metadata("design:returntype", Promise)
 ], CatVariableController.prototype, "obtenerCat", null);
+__decorate([
+    (0, common_1.Post)('/data/var'),
+    __param(0, (0, common_1.Headers)('usuario')),
+    __param(1, (0, common_1.Headers)('Authorization')),
+    __param(2, (0, common_1.Res)()),
+    __param(3, (0, common_1.Body)('cat')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, Object, String]),
+    __metadata("design:returntype", Promise)
+], CatVariableController.prototype, "obtenerCat2", null);
 __decorate([
     (0, common_1.Put)(),
     __param(0, (0, common_1.Res)()),

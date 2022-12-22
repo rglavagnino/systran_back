@@ -1,17 +1,3 @@
-###
-get http://172.18.231.1:5000/var/rlavagnino
-
-{
-
-}
-
-###
-get http://172.18.231.1:5000/var/rlavagnino/633f1e301da43ac6fd15f5b8
-
-{
-
-}
-
 
 ###
 put http://172.18.231.1:5000/var/
@@ -49,4 +35,26 @@ usuario: rlavagnino
     "desechado":1
     ,"nombre":"miau3"
     ,"variable":"633f345d6d2865e79849c38e"
+}
+
+
+###
+post http://172.18.231.1:5000/var/data/base
+Authorization: DTSI IS GAH
+Content-Type: application/json
+usuario: rlavagnino
+
+{
+
+    "base":"63448a36a88b5ff8c83e3fb8"
+}
+
+###
+post http://172.18.231.1:5000/var/data/
+Authorization: DTSI IS GAH
+Content-Type: application/json
+usuario: rlavagnino
+
+{
+
 }

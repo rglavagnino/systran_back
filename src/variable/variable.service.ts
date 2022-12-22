@@ -3,7 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { VariableModel } from 'src/models/variable.model';
 import { formarLog, loggerId, obtenerTipo, salidaYLog } from 'src/utils/salida';
-import { ObjectID } from 'bson';
+import { ObjectID, ObjectId } from 'bson';
+import { MiLogger } from 'src/utils/logs';
 
 
 @Injectable()
@@ -391,4 +392,81 @@ export class VariableService {
       varEncontradas,
     );
   }
+
+
+
+   /**
+ * ANCHOR 4006 - Obtener data
+ * @param usuario 
+ * @returns 
+ */
+
+    async obtenerDataporBase(usuario:string,base:string) {
+      const idFuncion = 4006;
+      const funDescr = 'Obteniendo el trabajando';
+      const milog = new MiLogger(usuario,idFuncion,funDescr)
+      milog.crearLog('Buscando las variables de una base')
+      if (!base) return milog.crearLogYSalida('No se puede obtener los datos, falta la base',3)
+   
+      const queryAggregation =  [
+        {
+        $match: {
+          activo:1
+          ,base: new ObjectId(base)
+        }},{
+       
+        $project: {
+          nombre:{$toUpper:"$nombre_variable"},
+          codigo:{$toUpper:"$codigo_variable"},
+          util:"$desechado",
+          descripcion: {$toUpper:"$descripcion"},
+          base:1
+          ,fecha:1
+        }
+        }
+    ]
+       milog.crearLog('Iniciando obteniendo los datos')
+       let vars = await this.variableModel.aggregate(queryAggregation)
+  
+       if (!vars) return milog.crearLogYSalida('No se pudo obtener las variables',3)
+       return milog.crearLogYSalida('Exito en obtener las variables',2,vars)
+    }
+
+    
+     /**
+ * ANCHOR 4007 - Obtener data
+ * @param usuario 
+ * @returns 
+ */
+
+   async obtenerData(usuario:string) {
+    const idFuncion = 4007;
+    const funDescr = 'Obteniendo el trabajando';
+    const milog = new MiLogger(usuario,idFuncion,funDescr)
+    milog.crearLog('Buscando todas las variables')
+  
+    const queryAggregation =  [
+      {
+      $match: {
+        activo:1
+
+      }},{
+     
+      $project: {
+        nombre:{$toUpper:"$nombre_variable"},
+        codigo:{$toUpper:"$codigo_variable"},
+        util:"$desechado",
+        descripcion: {$toUpper:"$descripcion"},
+        base:1
+        ,fecha:1
+      }
+      }
+  ]
+     milog.crearLog('Iniciando obteniendo los datos')
+     let vars = await this.variableModel.aggregate(queryAggregation)
+
+     if (!vars) return milog.crearLogYSalida('No se pudo obtener las variables',3)
+     return milog.crearLogYSalida('Exito en obtener las variables',2,vars)
+  }
+
 }

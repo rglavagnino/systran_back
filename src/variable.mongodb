@@ -1,0 +1,24 @@
+const base  = "SysBasePrueba"
+use(base)
+
+
+db.variable.aggregate(
+
+    [
+        {
+        $match: {
+          activo:1
+          ,_id: ObjectId()
+        }},{
+       
+        $project: {
+          nombre:{$toUpper:"$nombre_variable"},
+          codigo:{$toUpper:"$codigo_variable"},
+          util:"$desechado",
+          descripcion: {$toUpper:"$descripcion"},
+          base:1
+          ,fecha:1
+        }
+        }
+    ]
+)

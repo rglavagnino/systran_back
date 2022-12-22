@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Post,
   Put,
   Patch,
   Res,
@@ -18,13 +19,42 @@ import { obtenerPass } from 'src/utils/autenta';
 @Controller('catvar')
 export class CatVariableController {
   constructor(private catSrv: CatVariableService) {}
-  @Get(':usuario')
-  async obtenerCat(@Param('usuario') usuario: string, @Res() res: Response) {
+
+  @Post('/data/cat')
+  async obtenerCat(
+  @Headers('usuario') usuario: string,
+  @Headers('Authorization') token: string,
+   @Res() res: Response) {
+    if (!token || !usuario) {
+      return res.status(HttpStatus.FORBIDDEN).json({});
+    }
+
+    if (token !== obtenerPass()) {
+      return res.status(HttpStatus.FORBIDDEN).json({});
+    }
     const resp = await this.catSrv.obtenerCategoria(usuario);
     const stat = obtenerStatusHttp(resp);
     return res.status(stat).json(resp);
   }
 
+  @Post('/data/var')
+  async obtenerCat2(
+    @Headers('usuario') usuario: string,
+    @Headers('Authorization') token: string,
+     @Res() res: Response,
+     @Body('cat') cat:string
+     ) {
+      if (!token || !usuario) {
+        return res.status(HttpStatus.FORBIDDEN).json({});
+      }
+  
+      if (token !== obtenerPass()) {
+        return res.status(HttpStatus.FORBIDDEN).json({});
+      }
+    const resp = await this.catSrv.obtenerData(usuario,cat);
+    const stat = obtenerStatusHttp(resp);
+    return res.status(stat).json(resp);
+  }
   @Put()
   async insertar(
     @Res() res: Response,
@@ -60,19 +90,18 @@ export class CatVariableController {
     @Headers('Authorization') token: string,
     @Headers('usuario') usuario: string,
     @Body('cat') cat: string,
-  ){
+  ) {
     if (!token || !usuario) {
-        return res.status(HttpStatus.FORBIDDEN).json({});
-      }
-  
-      if (token !== obtenerPass()) {
-        return res.status(HttpStatus.FORBIDDEN).json({});
-      }
-    const resp = await this.catSrv.eliminarCategoria(cat,usuario)
+      return res.status(HttpStatus.FORBIDDEN).json({});
+    }
+
+    if (token !== obtenerPass()) {
+      return res.status(HttpStatus.FORBIDDEN).json({});
+    }
+    const resp = await this.catSrv.eliminarCategoria(cat, usuario);
     const stat = obtenerStatusHttp(resp);
     return res.status(stat).json(resp);
   }
-
 
   @Put('/var')
   async ingresarVariables(
@@ -80,22 +109,19 @@ export class CatVariableController {
     @Headers('Authorization') token: string,
     @Headers('usuario') usuario: string,
     @Body('cat') cat: string,
-    @Body('variables') vars:string[]
-  ){
+    @Body('variables') vars: string[],
+  ) {
     if (!token || !usuario) {
-        return res.status(HttpStatus.FORBIDDEN).json({});
-      }
-  
-      if (token !== obtenerPass()) {
-        return res.status(HttpStatus.FORBIDDEN).json({});
-      }
-    const resp = await this.catSrv.insertarVariables(usuario,cat,vars)
+      return res.status(HttpStatus.FORBIDDEN).json({});
+    }
+
+    if (token !== obtenerPass()) {
+      return res.status(HttpStatus.FORBIDDEN).json({});
+    }
+    const resp = await this.catSrv.insertarVariables(usuario, cat, vars);
     const stat = obtenerStatusHttp(resp);
     return res.status(stat).json(resp);
   }
-
-
-
 
   @Delete('/var')
   async eliminarVariables(
@@ -103,22 +129,20 @@ export class CatVariableController {
     @Headers('Authorization') token: string,
     @Headers('usuario') usuario: string,
     @Body('cat') cat: string,
-    @Body('variables') vars:string[]
-  ){
+    @Body('variables') vars: string[],
+  ) {
     if (!token || !usuario) {
-        return res.status(HttpStatus.FORBIDDEN).json({});
-      }
-  
-      if (token !== obtenerPass()) {
-        return res.status(HttpStatus.FORBIDDEN).json({});
-      }
-      
-    const resp = await this.catSrv.eliminarVariables(cat,vars,usuario)
+      return res.status(HttpStatus.FORBIDDEN).json({});
+    }
+
+    if (token !== obtenerPass()) {
+      return res.status(HttpStatus.FORBIDDEN).json({});
+    }
+
+    const resp = await this.catSrv.eliminarVariables(cat, vars, usuario);
     const stat = obtenerStatusHttp(resp);
     return res.status(stat).json(resp);
   }
-
-
 
   @Patch('')
   async actualizarCategoria(
@@ -126,25 +150,24 @@ export class CatVariableController {
     @Headers('Authorization') token: string,
     @Headers('usuario') usuario: string,
     @Body('cat') cat: string,
-    @Body('descripcion') descr:string,
-    @Body('dueño') dueño:string
-  ){
+    @Body('descripcion') descr: string,
+    @Body('dueño') dueño: string,
+  ) {
     if (!token || !usuario) {
-        return res.status(HttpStatus.FORBIDDEN).json({});
-      }
-  
-      if (token !== obtenerPass()) {
-        return res.status(HttpStatus.FORBIDDEN).json({});
-      }
-      
-    const resp = await this.catSrv.actualizarCategorias(usuario,cat,descr,dueño)
+      return res.status(HttpStatus.FORBIDDEN).json({});
+    }
+
+    if (token !== obtenerPass()) {
+      return res.status(HttpStatus.FORBIDDEN).json({});
+    }
+
+    const resp = await this.catSrv.actualizarCategorias(
+      usuario,
+      cat,
+      descr,
+      dueño,
+    );
     const stat = obtenerStatusHttp(resp);
     return res.status(stat).json(resp);
   }
-
-
-
-
-
-
 }

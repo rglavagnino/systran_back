@@ -10,6 +10,7 @@ import {
   salidaYLog,
 } from 'src/utils/salida';
 import { ObjectID } from 'bson';
+import { MiLogger } from 'src/utils/logs';
 
 @Injectable()
 export class CatVariableService {
@@ -32,9 +33,25 @@ export class CatVariableService {
     if (banderError)
       return salidaYLog(usuario, idFuncion, banderError, obtenerTipo(3));
     loggerId(usuario, 'Obteniendo todas la categorias activas', idFuncion);
-    let catEncontradas = await this.catVariableModel.find({
-      activo: 1,
-    });
+    let catEncontradas = await this.catVariableModel.aggregate(
+
+      [
+        {
+        $match: {
+          $and:[
+            {activo:1}
+          ]
+        }}
+        ,{
+            
+            $project: {
+              activo:1
+              ,descripcion:1,
+              dueño:1
+            }
+        }
+    ]
+    )
     if (!catEncontradas)
       return salidaYLog(
         usuario,
@@ -459,4 +476,95 @@ export class CatVariableService {
 
     return salidaYLog(usuario,idFuncion,'Exito en actualizar',obtenerTipo(2))
   }
+
+/**
+  * ANCHOR 5007 - Obtener data
+ * @param usuario 
+ * @returns 
+ */
+
+   async obtenerData(usuario:string, categoria:string) {
+    const idFuncion = 5007;
+    const funDescr = 'Obteniendo el trabajando';
+    const milog = new MiLogger(usuario,idFuncion,funDescr)
+    milog.crearLog('Buscando todas las variables de la categoria')
+    if (!categoria) return milog.crearLogYSalida('Error falta la categoria ', 3)
+    const queryAggregation =  [
+      {
+
+          $unwind: {
+            path: '$variables',
+            preserveNullAndEmptyArrays: true
+          }
+      },
+
+      {
+        
+          $lookup: {
+            from: 'variable',
+            localField: 'variables.variable',
+            foreignField: '_id',
+            as: 'variable2'
+          }
+      },
+
+     
+      {
+       
+          $unwind: {
+            path: '$variable2',
+            preserveNullAndEmptyArrays: true
+          }
+      },
+       {
+
+          $lookup: {
+            from: 'base',
+            localField: 'variable2.base',
+            foreignField: '_id',
+            as: 'bases'
+          }
+      },
+      {
+         
+          $unwind: {
+            path: '$bases',
+
+            preserveNullAndEmptyArrays: true
+          }
+      },
+      {
+      $match: {
+        $and:[
+          {activo:1},
+          {_id:new ObjectID(categoria)},
+          {$or:[
+              {"variables.activo":1},
+              {"variables.activo":null}
+          ]}
+        ]
+      }}
+      ,
+      {
+         
+          $project: {
+            categoria: {$toUpper:"$descripcion"}
+            ,imagen:1
+            ,nombre_variable:{$toUpper:"$variable2.nombre_variable"}
+            ,codigo_variable:{$toUpper:"$variable2.codigo_variable"}
+            ,descripcion_variable:{$toUpper:"$variable2.descripcion"}
+            ,base:{$toUpper:"$bases.nombre"}
+
+
+          }
+      }
+  ]
+     milog.crearLog('Iniciando obteniendo los datos')
+     let vars = await this.catVariableModel.aggregate(queryAggregation)
+
+     if (!vars) return milog.crearLogYSalida('No se pudo obtener las variables',3)
+     return milog.crearLogYSalida('Exito en obtener las variables',2,vars)
+  }
+
+
 }
